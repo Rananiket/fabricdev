@@ -1,0 +1,37 @@
+{% raw %}
+            <div id="trending-autocomplete" class="st-autocomplete-container" v-cloak>
+                <div id="st-before-search" v-show="showAutoCompleteModal">
+                    <div class="st-autocomplete-content">
+                        <div id="st-trending-searches">
+                            <div class="st-trending-header">
+                                <svg viewBox="0 0 500 500" width="18" height="18" fill="#f94" class="st-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="500" viewBox="0 0 48 48" width="500">
+                                        <path d="M32 12l4.59 4.59-9.76 9.75-8-8-14.83 14.83 2.83 2.83 12-12 8 8 12.58-12.59 4.59 4.59v-12z"></path>
+                                        <path d="M0 0h48v48h-48z" fill="none"></path>
+                                    </svg>
+                                </svg>
+                                <span class="st-heading-text">Trending Searches</span>
+                            </div>
+                            <ul class="st-trending-list" v-show="showOnFocusAutocomplete">
+                                <li class="st-trending-label" v-for="item in autoResults" @click="actionOnTrendingClick(item)">{{item.displayLabel}}</li>
+                            </ul>
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+
+{% endraw %}
+
+{% schema %}
+  {
+    "name": "Section name",
+    "settings": []
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

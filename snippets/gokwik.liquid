@@ -1,0 +1,324 @@
+
+{% comment %}
+
+//****  Gokwik buy now button: Put below Html on product page inside form
+
+<input type="hidden" class="gokwikpay" data-type="cod" id="gk_buy_now">               
+<button type="button" onclick="gokwikBuyNow()" id="gokwik-buy-now" >Gokwik Buy Now</button>
+
+//***** Html for Gokwik checkout buttons
+
+<div class="gokwik-container btn-right">
+  <button class="gokwikpay" data-type="cod" data-theme='{"primaryClr":"#45e8d8"}'>
+      <span>
+        <span class="btn-text">
+          <span>Pay Via UPI/COD</span>
+          <span>Extra 10% off on UPI</span> // Use for extra text note
+        </span>
+      </span>
+      <span>
+        <img class="pay-opt-icon" src="https://cdn.gokwik.co/v4/images/upi-icons.svg" />
+        <img src="https://cdn.gokwik.co/v4/images/right-arrow.svg" />
+      </span>
+  </button> 
+</div>
+
+
+{% endcomment %}
+
+
+<form name="gokwik">
+    <input type="hidden" name="mid" id="mid" value="405h113jkqji3r64">
+    <input type="hidden" name="action" id="action" value="pdp">
+    <input type="hidden" name="request_id" id="request_id" value="">
+</form>
+
+
+<script>
+
+/* cart login below  */
+  function makeXhr(method, url, data, track){ 
+    var xhttp = new XMLHttpRequest();
+    xhttp.open(method, url, true);
+    xhttp.setRequestHeader("Content-type", "application/json"); 
+    xhttp.onload = function() {
+      var status = xhttp.status;
+      var response = xhttp.response;
+       track( status, response)
+    };
+    xhttp.send(data ? JSON.stringify(data) : null); 
+  }
+  
+  
+
+HTMLElement.prototype.serialize = function(){
+    var obj = {};
+    var elements = this.querySelectorAll( "input, select, textarea" );
+    for( var i = 0; i < elements.length; ++i ) {
+        var element = elements[i];
+        var name = element.name;
+        var value = element.value;
+
+        if( name ) {
+            obj[ name ] = value;
+        }
+    }
+    return JSON.stringify( obj );
+}
+
+function addCartBuyNow(){
+  var productForm = document.querySelector('.product-single__form').serialize();
+//   var productVariation = document.querySelector('.swatch_options').serialize();
+  var productQuantity = document.querySelector('.product__quantity').serialize(); 
+  var data = Object.assign({}, JSON.parse(productForm), JSON.parse(productQuantity));
+     makeXhr('POST', '/cart/add.js', data, function(j){
+        if(j==200){
+         document.querySelector('#gk_buy_now').click();  
+         console.log('cart added'); 
+        }
+      });  
+}
+  
+function gokwikBuyNow() {
+  
+  if ({{ cart.item_count | json | json }}) {
+    makeXhr('GET', '/cart.js', '', function(statusCode, res){
+    console.log(statusCode);
+      if(statusCode === 200 ){
+        var cartItems = JSON.parse(res).items.map(element=>({
+          id:element.id,
+          quantity: element.quantity,
+          options_with_values : element.options_with_values
+        }));
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        makeXhr('POST', '/cart/clear.js', '', function(statusCode){
+          if(statusCode === 200){
+           addCartBuyNow()
+          }
+        });
+        
+      }
+    });
+  } else {   
+   addCartBuyNow() 
+  } 
+}
+  
+document.addEventListener('gokwikOrderCancel', (reAddCart)=> { 
+  if(localStorage.getItem('cartItems')){
+    var reTakeCart = JSON.parse(localStorage.getItem('cartItems'));
+    var data = {
+      'items': reTakeCart
+    }
+    makeXhr('POST', '/cart/clear.js', '', function(statusCode){
+       if(statusCode === 200){
+        makeXhr('POST', '/cart/add.js', data, function(j){
+          if(j==200){
+           localStorage.removeItem('cartItems');
+          }
+        });
+       }
+    });
+    
+  }
+  
+  });
+                          
+  
+  
+</script>
+<style>
+ /* gokwik scss block */
+  
+.gokwik-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0!important; }
+  .cart__page .gokwik-container button {
+    cursor: pointer;
+    width: 100%;
+    max-width: 100%!important;
+    border: 0;
+    border-radius: 4px!important;
+    padding: 8px!important;
+    display: flex;
+    justify-content: center!important;
+    align-items: center;
+    margin-top: 0!important;
+    transition-delay: 0.25s;
+    margin-bottom: 10px!important;
+    background: #3973a3!important; }
+  
+  .drawer__inner .gokwik-container button {
+    cursor: pointer;
+    width: 100%;
+    max-width: 100%!important;
+    border: 0;
+    border-radius: 3px!important;
+    padding: 15px 10px!important;
+    display: flex;
+    justify-content: center!important;
+    align-items: center;
+    margin-top: 0!important;
+    transition-delay: 0.25s;
+    margin-bottom: 10px!important;
+    background: #3973a3!important; }
+  
+    .gokwik-container button:focus {
+      outline: none; }
+    .gokwik-container button > span {
+      display: flex; }
+      .cart__page .gokwik-container button > span .btn-text {
+        display: flex;
+        flex-direction: column;
+        color: #fff;
+        align-items: flex-start; }
+        .gokwik-container button > span .btn-text > span:last-child {
+          font-size: 10px;
+          line-height: 10px; }
+        .cart__page .gokwik-container button > span .btn-text > span:first-child {
+          font-size: 12px !important;
+          line-height: 20px !important;
+          letter-spacing: .3em;
+          font-family: var(--typeBasePrimary),var(--typeBaseFallback);
+          font-weight: 700;
+          padding-right:10px;
+          text-transform: uppercase!important;
+      }
+  		.drawer__inner .gokwik-container button > span .btn-text > span:first-child {
+          font-size: 12px !important;
+          line-height: 20px !important;
+          letter-spacing: .3em;
+          font-family: var(--typeBasePrimary),var(--typeBaseFallback);
+          font-weight: 700;
+          padding-right:10px;
+          text-transform: uppercase!important;
+      }
+      .gokwik-container button > span .pay-opt-icon {
+        margin-right: 10px; }
+  .gokwik-container.btn-inline {
+    justify-content: space-between;
+    flex-direction: row; }
+    .gokwik-container.btn-inline button {
+      width: 49%; }
+  .gokwik-container.btn-right {
+    align-items: flex-end; }
+  
+
+    
+button.gokwikpay:hover {
+    background: var(--colorBtnPrimaryLight)!important;
+    transition-delay: 0.25s;
+}
+button.btn.cart__checkout {
+    font-size: max(calc(var(--typeBaseSize) - 4px), 12px)!important;
+    background: #3973a3;
+    color: #fff;
+}
+div#wa-chat-btn-root {
+    z-index: 9!important;
+}
+#gokwik-checkout {
+    z-index: 9999999999!important;
+}  
+  
+  
+@media(max-width:1024px){
+  .cart__page-col:last-child {
+    flex: 0 1 100%!important;
+}
+.cart__page-col:first-child {
+    padding-right: 0!important;
+}
+
+}
+
+@media(max-width:768px){ 
+button.btn.cart__checkout {
+    font-size: 11px!important;
+    padding: 18px 0!important;
+}
+.drawer__inner .gokwik-container button > span .btn-text > span:first-child {
+    font-size: 10px !important;
+}
+.gokwik-container button > span .pay-opt-icon {
+    height: 20px!important;
+}
+ .drawer__inner button.btn.cart__checkout {
+    font-size: 10px!important;
+}
+.cart__page .gokwik-container button {
+    padding: 15px 0!important;
+}
+}
+
+
+  
+ #gokwik-buy-now {
+   background: #3973a3; 
+   width: 100%; 
+   border: navajowhite; 
+   padding: 12px; 
+   border-radius: 3px; 
+   color: #fff; 
+   margin-bottom: 10px; 
+   margin-top:20px; 
+   text-transform: uppercase; 
+   font-size: 13px; 
+   letter-spacing: .3em; 
+   cursor: pointer; 
+   font-weight:700;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+} 
+button.shopify-payment-button__button {
+    display: none!important;
+}
+span.quickbuy-icon img.pay-opt-icon {
+    margin: 0 10px;
+}
+span.quickbuy-icon {
+    display: flex;
+    align-items: center;
+}
+
+@media(max-width:420px){ 
+button#gokwik-buy-now {
+    font-size: 10px!important;
+    padding: 15px 5px!important;
+}
+span.quickbuy-icon img.pay-opt-icon {
+    margin: 0 7px;
+    height: 18px;
+}
+}  
+@media(max-width:320px){ 
+.cart__page button.btn.cart__checkout {
+    font-size: 9px!important;
+    padding: 18px 0!important;
+}
+.drawer__inner .gokwik-container button > span .btn-text > span:first-child {
+    font-size: 8px !important;
+}
+button#gokwik-buy-now {
+    font-size: 10px!important;
+    padding: 15px 5px!important;
+}
+span.quickbuy-icon img.pay-opt-icon {
+    margin: 0 7px;
+    height: 18px;
+}
+.cart__page .gokwik-container button > span .btn-text > span:first-child {
+    font-size: 9px !important;
+}
+
+.drawer__inner button.btn.cart__checkout {
+    font-size: 8px!important;
+}
+}
+
+</style> 

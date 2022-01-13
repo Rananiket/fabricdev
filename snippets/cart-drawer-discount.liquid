@@ -1,0 +1,160 @@
+{% if settings.coupon_code %}
+<div class="cart-promo">
+  <div class="title_wrapper">
+    <svg aria-hidden="true" focusable="false" class="mu-transition-transform mu-duration-200 mu-ease-out mu-transform mu-rotate-45" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 13px; height: 13px;"><path fill="currentColor" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"></path></svg>
+    <h5>Coupon code</h5>
+  </div>
+  <div class="coupon-discount-box">
+    <div class="coupon-input">
+      <svg aria-hidden="true" focusable="false" class="mu-pr-2 mu-flex-shrink-0" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" color="rgba(189,16,224,1)" style="width: 25px; height: 25px;"><path fill="currentColor" d="M512 256c0-37.7-23.7-69.9-57.1-82.4 14.7-32.4 8.8-71.9-17.9-98.6-26.7-26.7-66.2-32.6-98.6-17.9C325.9 23.7 293.7 0 256 0s-69.9 23.7-82.4 57.1c-32.4-14.7-72-8.8-98.6 17.9-26.7 26.7-32.6 66.2-17.9 98.6C23.7 186.1 0 218.3 0 256s23.7 69.9 57.1 82.4c-14.7 32.4-8.8 72 17.9 98.6 26.6 26.6 66.1 32.7 98.6 17.9 12.5 33.3 44.7 57.1 82.4 57.1s69.9-23.7 82.4-57.1c32.6 14.8 72 8.7 98.6-17.9 26.7-26.7 32.6-66.2 17.9-98.6 33.4-12.5 57.1-44.7 57.1-82.4zm-320-96c17.67 0 32 14.33 32 32s-14.33 32-32 32-32-14.33-32-32 14.33-32 32-32zm12.28 181.65c-6.25 6.25-16.38 6.25-22.63 0l-11.31-11.31c-6.25-6.25-6.25-16.38 0-22.63l137.37-137.37c6.25-6.25 16.38-6.25 22.63 0l11.31 11.31c6.25 6.25 6.25 16.38 0 22.63L204.28 341.65zM320 352c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"></path></svg>
+      <input type="text" id="custom-coupon-field">
+      <a href="/checkout?discount=none" id="custom-coupon-button">Apply</a>
+      <span class="tag-close" style="display:none;">×</span>
+    </div>
+  </div>
+  <div class="coupon-error-box"></div>
+  <table class="discount-code_wrap"><tbody class="discount-price"></tbody></table>
+<!--   <div class="error-msg">Please enter a valid coupon code.</div> -->
+  
+</div>
+{% endif %}
+
+<script>
+  $(document).ready(function(){   
+    function sidebarCoupon(){
+      var theUrl = '/checkout?discount=';    
+      var theDiscount = $('#custom-coupon-field').val();
+      var toRedirect = theUrl+theDiscount;
+      
+      $.ajax({
+        type: "GET",
+        url: toRedirect,
+        success: function (response) {
+          var Htmlresponse = response;
+          var orderText = jQuery(Htmlresponse).find('.total-line.total-line--reduction[data-discount-type="percentage"]');
+          var subtotalPrice = jQuery(Htmlresponse).find('.total-line--subtotal .order-summary__emphasis').data('checkout-subtotal-price-target')/100;
+          var totalPrice = orderText.find('.total-line__price .order-summary__emphasis').data('checkout-discount-amount-target')/100;
+          var totalAmount = '<p>Rs. ' + (subtotalPrice - totalPrice).toFixed(2) + '</p>';
+          var errorText = jQuery(Htmlresponse).find('.field--error .field__message--error').length;
+          
+          if(errorText == 1){
+            $('.coupon-error-box').html('<p>Enter a valid discount code</p>').show();
+            $('.tag-close').show();
+              $('.discount-code_wrap, .total-box').hide();
+              $('#CartDrawer .cart__item-sub.cart__item-row').removeClass('subtotal-add');
+            $('.drawer__scrollable').css('opacity','');
+          }else{
+            $('.discount-code_wrap .discount-price').html(orderText);
+            $('.coupon-input .tag-close').show();
+            $('.total-amount_wrap').html(totalAmount);
+            $('.total-text_wrap').html('<p>Total</p>');
+            $('.coupon-error-box').hide();
+            $('.discount-code_wrap, .total-box').show();
+            
+            var localCoupon= $('.cart-promo').html();
+            var localCouponTotal= $('.total-box').html();
+            var couponCode = $('#custom-coupon-field').val();
+            console.log(localCoupon, 'localCoupon');
+            localStorage.setItem('coupon', localCoupon);
+            localStorage.setItem('couponTotal', localCouponTotal);
+            localStorage.setItem('couponCode', couponCode);
+            $('.drawer__scrollable').css('opacity','').css('pointer-events','');
+          }
+        }
+      });
+    }
+    
+    
+    $(document).on("click","#custom-coupon-button",function(event) {
+      event.preventDefault();
+      if($('#custom-coupon-field').val() == ''){
+         $('.discount-code_wrap, .total-box').hide();
+         $('.coupon-error-box').html('<p>Enter a valid discount code</p>').show();
+      } else {
+        sidebarCoupon();
+      }
+    });
+    
+    $(document).ready(function() {
+      if (localStorage.getItem("coupon") !== null) {
+        $('.cart-promo').html(localStorage.getItem('coupon'));
+        $('.total-box').html(localStorage.getItem('couponTotal'));
+        $('#custom-coupon-field').val(localStorage.getItem('couponCode'));
+        $('.tag-close').show();
+        $('.discount-code_wrap, .total-box').show();
+      }else {
+        console.log('Coupon not found');
+      }
+    });
+    
+    $(document).on("click",".add-to-cart, #add-to-cart-button, .quantity-cart-drawer button",function() {
+      
+      if (localStorage.getItem("coupon")) {
+         $('.drawer__scrollable').css('opacity','0.5').css('pointer-events','none');
+          setTimeout(function() {
+          sidebarCoupon();
+        }, 1000);
+      }
+    });
+//     $(document).on("focusout",".js-qty__num",function() {
+//       if (localStorage.getItem("coupon")) {
+//         setTimeout(function() {
+//           sidebarCoupon();
+//         }, 2500);
+//       }
+//     });
+    
+    $(document).on("click",".cart-promo .title_wrapper",function() {
+      $(".coupon-discount-box").toggle();
+    });
+
+    $(document).on("click",".tag-close",function() {
+      localStorage.removeItem('coupon');
+      localStorage.removeItem('couponCode');
+      localStorage.removeItem('couponTotal');
+
+      $("input[type=text]#custom-coupon-field").val("");
+      $('.discount-price .total-line__name span').replaceWith('');
+      $('.total-line__price span').replaceWith('');
+      $('.total-text_wrap p').replaceWith('');
+      $('.total-amount_wrap p').replaceWith('');
+      $('.tag-close, .discount-code_wrap, .coupon-error-box').hide();
+    });
+    function clearCoupon(deleteBtn){
+      if(deleteBtn == 1){
+        localStorage.removeItem('coupon');
+        localStorage.removeItem('couponCode');
+        localStorage.removeItem('couponTotal');
+
+        $("input#custom-coupon-field").val("");
+        $('.total-box').hide();
+        $('.coupon-discount-box').hide();
+        $('.discount-price .total-line__name span').remove();
+        $('.total-line__price span').remove('');
+        $('.total-text_wrap p').remove();
+        $('.total-amount_wrap p').remove();
+        $('.tag-close, .discount-code_wrap, .coupon-error-box').hide();
+      }
+    }
+    
+    $(document).on("click",".js-qty__adjust--minus .delete",function() {
+      var deleteBtn = $(this).parents("#CartDrawer").find(".js-qty__adjust--minus").length;
+      console.log(deleteBtn);
+      clearCoupon(deleteBtn);
+    });
+    $(document).on("focusout",".js-qty__num",function() {
+      var deleteBtn = $(this).parents("#CartDrawer").find(".js-qty__adjust--minus").length;
+      var qtynum = $(this).val();
+      if( qtynum == '' || qtynum == 0 ) {
+      		console.log(deleteBtn);
+      		clearCoupon(deleteBtn);
+      } else {
+        if (localStorage.getItem("coupon")) {
+          setTimeout(function() {
+            sidebarCoupon();
+          }, 2500);
+        }
+      }
+    });
+  });
+</script>

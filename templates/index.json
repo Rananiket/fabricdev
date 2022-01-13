@@ -1,0 +1,193 @@
+{
+  "sections": {
+    "1633801010a0a63eb7": {
+      "type": "slideshow",
+      "blocks": {
+        "c175e3e1-4d94-428b-9d3e-2bff174eb58d": {
+          "type": "image",
+          "settings": {
+            "top_subheading": "NOW LIVE",
+            "title": "Unstitched Kurta Sets",
+            "title_size": 54,
+            "subheading": "",
+            "link": "shopify:\/\/collections\/unstitched-suit-sets",
+            "link_text": "SHOP NOW",
+            "link_2": "",
+            "link_text_2": "",
+            "color_accent": "#f2cb4f",
+            "text_align": "vertical-center horizontal-center",
+            "image": "shopify:\/\/shop_images\/Untitled_design_3_e0c05c25-7350-49e6-a49a-42f930bc132b.png",
+            "image_mobile": "shopify:\/\/shop_images\/suits.png",
+            "overlay_opacity": 0,
+            "focal_point": "center center"
+          }
+        },
+        "1633801010a0a63eb7-0": {
+          "type": "image",
+          "settings": {
+            "top_subheading": "India's most loved",
+            "title": "Cotton Linen Masks",
+            "title_size": 76,
+            "subheading": "Handcrafted with natural fabrics",
+            "link": "shopify:\/\/collections\/multi-color-face-masks",
+            "link_text": "SHOP NOW",
+            "link_2": "",
+            "link_text_2": "",
+            "color_accent": "#ffffff",
+            "text_align": "vertical-center horizontal-center",
+            "image": "shopify:\/\/shop_images\/1-21.jpg",
+            "overlay_opacity": 10,
+            "focal_point": "center center"
+          }
+        },
+        "55a5ef5c-ab7b-42f9-a10d-ef487ac98a72": {
+          "type": "image",
+          "settings": {
+            "top_subheading": "Launching",
+            "title": "Pure Dyeable Fabrics",
+            "title_size": 65,
+            "subheading": "Cotton | Viscose | Silk | Modal | Linen",
+            "link": "shopify:\/\/collections\/dyeable-fabrics",
+            "link_text": "SHOP NOW",
+            "link_2": "",
+            "link_text_2": "",
+            "color_accent": "#ffffff",
+            "text_align": "vertical-center horizontal-center",
+            "image": "shopify:\/\/shop_images\/dyeable.png",
+            "overlay_opacity": 0,
+            "focal_point": "20% 0"
+          }
+        }
+      },
+      "block_order": [
+        "c175e3e1-4d94-428b-9d3e-2bff174eb58d",
+        "1633801010a0a63eb7-0",
+        "55a5ef5c-ab7b-42f9-a10d-ef487ac98a72"
+      ],
+      "settings": {
+        "section_height": "450px",
+        "mobile_height": "300px",
+        "parallax": false,
+        "style": "arrows",
+        "autoplay": true,
+        "autoplay_speed": 5
+      }
+    },
+    "16338026624341e2fa": {
+      "type": "featured-collections",
+      "blocks": {
+        "16338026624341e2fa-0": {
+          "type": "collection",
+          "settings": {
+            "collection": "face-masks-for-men",
+            "title": "",
+            "focal_point": "center center"
+          }
+        },
+        "16338026624341e2fa-1": {
+          "type": "collection",
+          "settings": {
+            "collection": "face-masks-for-women",
+            "title": "",
+            "focal_point": "center center"
+          }
+        },
+        "16338026624341e2fa-2": {
+          "type": "collection",
+          "settings": {
+            "collection": "multi-color-face-masks",
+            "title": "",
+            "focal_point": "center center"
+          }
+        },
+        "16338026624341e2fa-3": {
+          "type": "collection",
+          "settings": {
+            "collection": "padmate-sanitary-pad-pouch",
+            "title": "",
+            "focal_point": "center center"
+          }
+        }
+      },
+      "block_order": [
+        "16338026624341e2fa-0",
+        "16338026624341e2fa-1",
+        "16338026624341e2fa-2",
+        "16338026624341e2fa-3"
+      ],
+      "settings": {
+        "title": "Explore Best Selling Collections",
+        "divider": false,
+        "per_row": 5,
+        "enable_gutter": true
+      }
+    },
+    "16338028693c3c70c0": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Explore New Arrivals",
+        "home_featured_products": "new-arrivals",
+        "per_row": 4,
+        "rows": 1,
+        "mobile_scrollable": true,
+        "view_all": true,
+        "divider": true
+      }
+    },
+    "1633978038af4253c6": {
+      "type": "featured-collections",
+      "blocks": {
+        "1633978038af4253c6-0": {
+          "type": "collection",
+          "settings": {
+            "collection": "dyeable-fabrics",
+            "title": "",
+            "focal_point": "center center"
+          }
+        },
+        "1633978038af4253c6-1": {
+          "type": "collection",
+          "settings": {
+            "collection": "cotton-flex-linen-fabrics",
+            "title": "",
+            "focal_point": "center center"
+          }
+        },
+        "1633978038af4253c6-2": {
+          "type": "collection",
+          "settings": {
+            "collection": "printed-fabrics",
+            "title": "",
+            "focal_point": "center center"
+          }
+        },
+        "1633978038af4253c6-3": {
+          "type": "collection",
+          "settings": {
+            "collection": "rayon-fabric-material-online",
+            "title": "",
+            "focal_point": "center center"
+          }
+        }
+      },
+      "block_order": [
+        "1633978038af4253c6-0",
+        "1633978038af4253c6-1",
+        "1633978038af4253c6-2",
+        "1633978038af4253c6-3"
+      ],
+      "settings": {
+        "title": "Explore Best Sellers in Fabrics",
+        "divider": false,
+        "per_row": 4,
+        "enable_gutter": true
+      }
+    }
+  },
+  "order": [
+    "1633801010a0a63eb7",
+    "16338026624341e2fa",
+    "16338028693c3c70c0",
+    "1633978038af4253c6"
+  ]
+}

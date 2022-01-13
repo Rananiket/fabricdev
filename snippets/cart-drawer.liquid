@@ -1,0 +1,176 @@
+{%- if settings.cart_type == 'drawer' -%}
+  <div id="CartDrawer" class="drawer drawer--right">
+    <form id="CartDrawerForm" action="{{ routes.cart_url }}" method="post" novalidate class="drawer__contents custom-cart-form-class">
+      <div class="drawer__fixed-header">
+        <div class="drawer__header appear-animation appear-delay-1">
+          <div class="h2 drawer__title">{{ 'cart.general.title' | t }}</div>
+          <div class="drawer__close">
+            <button type="button" class="drawer__close-button js-drawer-close">
+              <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.12L19 44.74"/></svg>
+              <span class="icon__fallback-text">{{ 'cart.general.close_cart' | t }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {% comment %}Custom Free Shipping Bar{% endcomment %}
+      {% if settings.free_shipping_text %}
+      	{% render 'free-shipping-cart' %}
+      {% endif %}
+
+      <div class="drawer__inner">
+        <div class="drawer__scrollable">
+          <div data-products class="appear-animation appear-delay-2"></div>
+
+          {% if settings.cart_notes_enable %}
+            <div class="appear-animation appear-delay-3">
+              <label for="CartNoteDrawer">{{ 'cart.general.note' | t }}</label>
+              <textarea name="note" class="input-full cart-notes" id="CartNoteDrawer">{{ cart.note }}</textarea>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="drawer__footer appear-animation appear-delay-4">
+          <div data-discounts>
+            {% if cart.cart_level_discount_applications != blank %}
+              <div class="cart__discounts cart__item-sub cart__item-row">
+                <div>{{ 'cart.general.discounts' | t }}</div>
+                <div class="text-right">
+                  {% for cart_discount in cart.cart_level_discount_applications %}
+                    <div class="cart__discount">
+                      {{ cart_discount.title }} (-{{ cart_discount.total_allocated_amount | money }})
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="coupon-area">
+            {% render 'cart-drawer-discount' %}
+
+            <div class="cart__item-sub cart__item-row">
+              <div class="ajaxcart__subtotal">{{ 'cart.general.subtotal' | t }}</div>
+              <div data-subtotal>{{ cart.total_price | money }}</div>
+            </div>
+            
+            {% if settings.coupon_code %}
+            <div class="total-box">
+              <div class="total-text_wrap"></div>
+              <div class="total-amount_wrap"></div>
+            </div>
+            {% endif %}
+          </div>
+          
+         {% comment %} <div class="cart__item-row text-center">
+            <small>
+              {{ 'cart.general.shipping_at_checkout' | t }}<br />
+            </small>
+          </div>
+		  {% endcomment %}
+          
+          {% if settings.cart_terms_conditions_enable %}
+            <div class="cart__item-row cart__terms">
+              <input type="checkbox" id="CartTermsDrawer" class="cart__terms-checkbox">
+              <label for="CartTermsDrawer">
+                {% if settings.cart_terms_conditions_link != blank %}
+                  {{ 'cart.general.terms_html' | t: url: settings.cart_terms_conditions_link }}
+                {% else %}
+                  {{ 'cart.general.terms' | t }}
+                {% endif %}
+              </label>
+            </div>
+          {% endif %}
+
+          <div class="cart__checkout-wrapper">
+            <button type="submit" name="checkout" data-terms-required="{{ settings.cart_terms_conditions_enable }}" class="btn cart__checkout">
+              {%comment%}{{ 'cart.general.checkout' | t }}{%endcomment%}Place Order
+            </button>
+
+            {% if additional_checkout_buttons and settings.cart_additional_buttons %}
+              <div class="additional-checkout-buttons additional-checkout-buttons--vertical">{{ content_for_additional_checkout_buttons }}</div>
+            {% endif %}
+            {%comment%}
+            <div class="gokwik-container btn-right">
+                    <button class="gokwikpay" data-type="cod" data-theme='{"primaryClr":"#3973a3"}'>
+                      <span>
+                        <span class="btn-text">
+                          <span>Pay via UPI / Cash On Delivery</span>
+                          <span style="font-size: 12px!important;margin-top:5px;">10% Off on UPI </span>
+                        </span>
+                      </span>
+                      <span>
+                        <img class="pay-opt-icon" src="https://cdn.gokwik.co/v4/images/upi-icons.svg">
+                        <img src="https://cdn.gokwik.co/v4/images/right-arrow.svg">
+                      </span>
+                    </button> 
+   			    </div>
+            {%endcomment%}
+            <div class="sidebar-payment-icons-title">
+              <svg width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.282 9.387H16.8127V7.287C16.8127 3.27 13.5332 0 9.5015 0C5.46983 0 2.19034 3.27 2.19034 7.29V9.39H1.71797C0.770229 9.39 0 10.158 0 11.103V22.287C0 23.232 0.770229 24 1.71797 24H17.282C18.2298 24 19 23.232 19 22.287V11.1C19 10.155 18.2328 9.387 17.282 9.387ZM4.88614 7.29C4.88614 4.752 6.95614 2.688 9.5015 2.688C12.0469 2.688 14.1169 4.752 14.1169 7.29V9.39H4.88614V7.29Z" fill="#4AB757"/>
+              </svg>
+              <span>Guaranteed Safe & Secure Checkout</span>
+            </div>
+            <ul class="sidebar-payment-icons">
+              <li class="sidebar-payment-icon">
+                <img src="//cdn.shopify.com/s/files/1/0270/8435/7687/files/gpay-logo-shopify_120x.png" alt="GPay">
+              </li>
+              <li class="sidebar-payment-icon">
+                <img src="//cdn.shopify.com/s/files/1/0270/8435/7687/files/upi-logo-shopify_120x.png" alt="UPI">
+              </li>
+              <li class="sidebar-payment-icon">
+                <img src="//cdn.shopify.com/s/files/1/0270/8435/7687/files/paytm-logo-shopify_120x.png" alt="PayTM">
+              </li>
+              <li class="sidebar-payment-icon">
+                <img src="//cdn.shopify.com/s/files/1/0270/8435/7687/files/visa-logo-shopify_120x.png" alt="VISA">
+              </li>
+              <li class="sidebar-payment-icon">
+                <img src="//cdn.shopify.com/s/files/1/0270/8435/7687/files/mastercard-logo-shopify_120x.png" alt="MasterCard">
+              </li>
+            </ul>
+            
+            <div class="rte text-spacing continue_btn">
+              {%- if cart.item_count == 0 -%}
+              <p>{{ 'cart.general.empty' | t }}</p>
+              {%- endif -%}
+              <p>{{ 'cart.general.continue_browsing_html' | t: url: routes.all_products_collection_url }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {% if settings.frequently_together %}
+      <div class="page-width frequently-recommend-section" id="frequentlyRecommendSection">
+        <header  class="section-header">
+          <h3 class="section-header__title" id="customize-recommend-section-title">
+          </h3>
+        </header>
+        <div class="customize-recommend-section"></div>
+      </div>
+      {% endif %}
+      
+      <div class="drawer__cart-empty appear-animation appear-delay-2">
+        <div class="drawer__scrollable">
+          {{ 'cart.general.empty' | t }}
+        </div>
+      </div>
+    </form>
+  </div>
+{%- endif -%}
+<script>
+  // For Update the cart URL if zipcode serviceable and pass data to checkout	
+  if (localStorage.getItem('fp_state') != null && localStorage.getItem('fp_only_zipcode') != null && localStorage.getItem('fp_city') != null) {
+    var fp_get_country = 'India';
+    var fp_get_state = localStorage.getItem('fp_state');
+    var fp_get_city = localStorage.getItem('fp_city');
+    var fp_get_zipcode =  localStorage.getItem('fp_only_zipcode');
+    
+    var cartUrl = '?checkout[shipping_address][country]='+fp_get_country+'&checkout[shipping_address][province]='+fp_get_state+'&checkout[shipping_address][city]='+fp_get_city+'&checkout[shipping_address][zip]='+fp_get_zipcode;
+    
+    $(".custom-cart-form-class").attr('action',$(".custom-cart-form-class").attr('action')+ cartUrl);
+    
+  }else{    
+    $(".custom-cart-form-class").attr('action','/cart');
+  }
+</script>

@@ -1,0 +1,119 @@
+<style>
+  body, .coupon-area{
+    position: relative;
+  }
+  #confetti-canvas{
+    z-index: 999999 !important;
+    position: absolute;
+    pointer-events: none;
+    right: 0;
+  }
+  .canvas-confetti{
+    top: 0;
+    position: fixed;
+    right: 0;
+  }
+</style>
+
+{% assign threshold = settings.shipping_price | times: 100 %}
+{% assign unlocked_txt = 'You have got free shipping 👌' %}
+{% assign cart_price = cart.total_price | divided_by : 100 %}
+{% assign final_price = settings.shipping_price | minus : cart_price %}
+{% assign promote_txt = 'Add ' | append : final_price | append : ' to get <strong>free shipping</strong>' %}
+
+<div class="free-shipping-bar" data-promote="{{promote_txt}}" data-unlocked="{{unlocked_txt}}" data-threshold="{{threshold}}">
+  <div>
+    <div class="canvas-confetti">
+      <canvas id="confetti-canvas" width="350" height="600"></canvas>
+    </div>
+    {% if cart.item_count == 0 %}<p class="main-text">{% if cart.items.size == 0 %}{{ settings.shipping_text }} Rs{{ settings.shipping_price }}{% endif %}</p>{% endif %}
+    {% if cart.items.size != 0 %}
+      {% if cart.total_price >= threshold %} 
+        <p class="unlock">{{ unlocked_txt }}</p>
+      {% elsif cart.total_price < threshold %}
+        <p class="msg">Add <strong>{{ threshold | minus: cart.total_price | money }}</strong> to get <strong>free shipping</strong></p>
+      {% endif %}
+    {% endif %}
+  </div>
+  <div class="progress-bar">
+    <div class="progress-bar-fill"></div>
+  </div>
+</div>
+
+<script src="{{ 'confetti.js' | asset_url }}"></script>
+<script>
+  class ProgressBar {
+    constructor (element, initialValue = 0) {
+      //this.valueElem = element.querySelector('.progress-bar-value');
+      this.fillElem = element.querySelector('.progress-bar-fill');
+      this.setValue(initialValue);
+    }
+    setValue (newValue) {
+      if (newValue < 0) {
+        newValue = 0;
+      }
+      if (newValue > 100) {
+        newValue = 100;
+      }
+      this.value = newValue;
+      this.update();
+    }
+    update() {
+      const percentage = this.value + '%';
+      this.fillElem.style.width = percentage;
+    }
+  }
+  
+  $(document).ready(function () {
+    let free_price = {{ settings.shipping_price | json }};
+    let remining_price = {{ cart.total_price | divided_by: 100 | json }};
+    let progressBarObj = new ProgressBar(document.querySelector('.progress-bar'), (remining_price * 100)/ free_price );
+  });
+  
+  function progressConfitti(){
+    setTimeout(function(){
+      let free_price = {{ settings.shipping_price | json }};
+      let remining_price = {{ cart.total_price | divided_by: 100 | json }};
+      var cartContents = fetch('/cart.js')
+      .then(response => response.json())
+      .then(function(data) {
+        if((data.total_price/100) < free_price){
+          var progressBarTotal = ((data.total_price/100)/free_price)*100;
+          var progressBarText = 'Add  <strong> Rs.'+ (free_price-(data.total_price/100)).toFixed(2) +'</strong> to get <strong>free shipping</strong>';
+          if (localStorage.getItem('confetti')) {
+            localStorage.removeItem('confetti');
+          }
+        }
+        else{
+          var progressBarTotal = 100;
+          var progressBarText = 'You have got free shipping 👌';
+
+          if (localStorage.getItem('confetti') === null) {
+            var ht = $("#CartDrawerForm").height();
+            var wt = $("#CartDrawer").width();
+            $("#confetti-canvas").height(ht);
+            $("#confetti-canvas").width(wt);
+            startConfetti();
+            $('#CartDrawerForm').css('overflow-y','hidden');
+          }
+          localStorage.setItem('confetti', 'fire');
+
+          setTimeout(function() {
+            stopConfetti();
+            $('#CartDrawerForm').css('overflow-y','scroll');
+          }, 3000);
+        }
+        var progressBarObj2 = new ProgressBar (document.querySelector('.progress-bar'), progressBarTotal);
+        $('.free-shipping-bar p').html(progressBarText);
+      });
+     
+    }, 500);
+  }
+  $(document).on("click",".js-qty__adjust, .product-single__form, .recomend-addToCart_btn input",function() {
+    progressConfitti();
+  });
+  
+  $(document).on("focusout",".js-qty__num",function() {
+    progressConfitti();
+  });
+</script>

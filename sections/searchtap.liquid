@@ -1,0 +1,639 @@
+ {%comment%}SearchTap css{%endcomment%}
+    {{ 'searchtap.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'searchtap.js' | asset_url }}" defer></script>
+
+<script>
+            var st_app_id = 'TG75NSR58UCJ3XNLEQBH1DHX';
+                       var st_app_read_token = '6HTQAKF2M1XXPY6PAMN6XT77';
+                       var st_collection_id = '41NWH7BXFJINIBNFEKARPR3A';
+                       var st_trending_collection_id = '1H6MXLNX4K27VFBUFCGYGQIN';
+</script>
+{% raw %}
+
+          <div id="searchModalContainer" v-cloak>
+              <div id="searchModal" class="page-width" v-show="isOpen && !errorEncountered">
+                  <div :class="{'st-loading': loader}">
+                      <div v-show="!loader">
+                          <div class="contain-size" v-show="(topFilter.selected.length > 0 || topFilter.values.length > 0) && totalHits > 0" :key="topFilter.field">
+                              <div class="st-col-md-12">
+                                  <div id="new_tags">
+                                      <div id="st-scroll" class="clear-fix all_tags">
+                                          <div class="multiple_box1">
+                                              <div class="tag-button" v-for="i in topFilter.selected" :key="i">
+                                                  <label class="nav-link">
+                                                      <input type="checkbox" :value="i" @change="pushFilter(),filterAnalytics('top',topFilter.title,i)" v-model="topFilter.selected">
+                                                      <span class="filter-tags">{{i}}</span>
+                                                  </label>
+                                              </div>
+                                              <div class="tag-button" v-for="i in getNotSelectedFilters(topFilter.field)" :key="i.name">
+                                                  <label class="nav-link">
+                                                      <input type="checkbox" :value="i.name" @change="pushFilter(),filterAnalytics('top',topFilter.title,i.name)" v-model="topFilter.selected">
+                                                      <span class="filter-tags">{{i.name}}</span>
+                                                  </label>
+                                              </div>
+                                              <span id="tag_left" class="hidden-xs hidden-sm" @click="breadCrumbScroll(-1)">
+                                                  <span class="st-left-arrow"></span>
+                                              </span>
+                                              <span id="tag_right" class="hidden-xs hidden-sm" @click="breadCrumbScroll(+1)">
+                                                  <span class="st-right-arrow"></span>
+                                              </span>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div class="st-products-outer">
+                              <div class="st-row">
+                                
+                                  <div class="st-col-md-3 stpp6" :class="{'hidden-mobile': totalHits>0}" v-show="totalHits>0">
+                                     <div class="filter-tag-column st-width" v-if="allSelectedFilters.length > 0">
+                                            <div class="st-filter-tags">
+                                                <div class="st-filter-inner">
+                                                    <div class="tag-item" v-for="filter in allSelectedFilters" :key="filter.field" @click="clearSingleFilter(filter.selected,filter.field)">
+                                                        <div class="tag-content" v-if="filter.type !== 'numericFacet'">
+                                                            <span class="st-filter-selected-value">{{filter.selected}}</span>
+                                                        </div>
+                                                        <div class="tag-content" v-else>
+                                                            <span class="st-filter-selected-value" v-if="filter.title === 'Discount'">
+                                                            {{filter.selected[0]}}% And Above
+                                                        </span>
+                                                           
+
+                                                        </div>
+                                                      <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.12L19 44.74"></path></svg>
+                                                    </div>
+                                                    
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                    
+                                      <div id="STbar" class="sidebar">
+                                          <div class="filter-header">
+                                              <div class="st-flex st-justify-content-between">
+                                                  <h4 class="filter-title">
+                                                      Filter by
+                                                      <span class="st-reset-all" v-show="filterCount > 0 || showSliderReset" @click="clearFilters()">Clear all</span>
+                                                  </h4>
+                                              </div>
+                                          </div>
+                                          <div class="sidebar__inner">
+                                              <div class="filter-container" v-show="!sliderDisable">
+                                                  <div class="st-filter-tab st-price-filter" @click="showSlider = !showSlider">
+                                                      <span class="st-clear" v-show="showSliderReset" v-on:click.stop="resetSlider">Clear</span>
+                                                      <h4 class="main-filter-title">Price</h4>
+                                                    <div :class="[showSlider ? 'st-up-arrow' : 'st-down-arrow','st-arrows']">
+                                                         
+                                                      </div>
+                                                  </div>
+                                                  <div class="filter-list-container price-slider" v-show="showSlider">
+                                                    <div class="slider-inputs">
+                                                          <div class="slider-min">
+                                                              <label>
+                                                                  {{ currencySymbol }}
+                                                                  <input v-model="sliderValue[0]" type="number" v-on:keyup.enter="setSlider" min="0" inputmode="numeric" pattern="[0-9]*" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');"/>
+                                                              </label>
+                                                          </div>
+                                                          <div class="slider-max">
+                                                              <label>
+                                                                  {{ currencySymbol }}
+                                                                  <input v-model="sliderValue[1]" type="number"  v-on:keyup.enter="setSlider" min="0" inputmode="numeric" pattern="[0-9]*" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');"/>
+                                                              </label>
+                                                          </div>
+                                                          <!--                                                      <div class="apply-btn"><span class="apply-slider" @click="setSlider">Go</span></div>-->
+                                                      </div>
+                                                      <vue-slider :contained="true" ref="slider"
+                                                                  @change="sliderChange"
+                                                                  height="5px"
+                                                                  :min="sliderMin"
+                                                                  :max="sliderMax"
+                                                                  :lazy="true"
+                                                                  :silent="true"
+                                                                  v-model="sliderValue"></vue-slider>
+                                                      
+                                                  </div>
+                                              </div>
+                                              <div class="filter-container" v-for="f in filters" :key="f.field" v-show="f.values.length > 0 || f.selected.length > 0 || f.type === 'singleStatic'">
+                                                  <div class="st-filter-tab st-flex st-justify-content-between st-mb16" @click="f.isOpen = !f.isOpen">
+                                                      <span class="st-clear" v-show="f.selected.length > 0" v-on:click.stop="clearFilters(f.field)">Clear</span>
+                                                      <h4 class="main-filter-title">{{ f.title }}</h4>
+                                                      <div :class="[f.isOpen ? 'st-up-arrow' : 'st-down-arrow','st-arrows']">
+                                                         
+                                                      </div>
+                                                  </div>
+                                                  <div class="filter-list-container" v-show="f.isOpen">
+                                                      <ul :id=`${f.field}FilterValuesDesktop` class="filter-list-desktop" v-if="f.type === 'textFacet'">
+                                                          <li  v-for="i in f.selected" class="st-active" :key="i">
+                                                              <div class="outer-checkbox">
+                                                                  <label class="st-flex">
+                                                                      <input type="checkbox" :value="i" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,i)">
+                                                                      <span class="st-checkbox"></span>
+                                                                      <div class="filter-label">{{i}} ({{getSelectedCount(i,f.field)}})</div>
+<!--                                                                       <span class="number_of_product">({{getSelectedCount(i,f.field)}})</span> -->
+                                                                  </label>
+                                                              </div>
+                                                          </li>
+                                                          <li v-for="i in getNotSelectedFilters(f.field)" :key="i.name">
+                                                              <div class="outer-checkbox">
+                                                                  <label class="st-flex">
+                                                                      <input type="checkbox" :value="i.name" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,i.name)">
+                                                                      <span class="st-checkbox"></span>
+                                                                      <div class="filter-label">{{ i.name }} ({{ i.count }})</div>
+<!--                                                                       <span class="number_of_product">({{ i.count }})</span> -->
+                                                                  </label>
+                                                              </div>
+                                                          </li>
+                                                      </ul>
+                                                      <ul :id=`${f.field}FilterValuesDesktop` class="filter-list-desktop" v-else-if="f.type === 'numericFacet'">
+                                                          <li v-for="i in f.selected" class="st-active" :key="i[0]">
+                                                              <div class="outer-checkbox">
+                                                                  <label class="st-flex" v-if="f.field === 'discounted_price'">
+                                                                      <input type="checkbox" :value="[i[0],i[1]]" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,[i[0],i[1]])">
+                                                                      <span class="st-checkbox"></span>
+                                                                      <div class="filter-label">{{currencySymbol}}{{i[0]}}
+                                                                          <span v-if="i[0] !== '10001'">- {{ currencySymbol }}{{ i[1] }}</span>
+                                                                          <span v-else> And Above</span>
+                                                                      </div>
+                                                                      <span class="number_of_product">({{getSelectedCount(i,f.field)}})</span>
+                                                                  </label>
+                                                                  <label class="st-flex" v-else-if="f.field === 'discount'">
+                                                                      <input type="checkbox" :value="[i[0],i[1]]" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,[i[0],i[1]])">
+                                                                      <span class="st-checkbox"></span>
+                                                                      <div class="filter-label">{{i[0]}}% And Above ({{getSelectedCount(i,f.field)}})</div>
+<!--                                                                       <span class="number_of_product">({{getSelectedCount(i,f.field)}})</span> -->
+                                                                  </label>
+                                                              </div>
+                                                          </li>
+                                                          <li v-for="i in getNotSelectedFilters(f.field)" :key="i.min">
+                                                              <div class="outer-checkbox">
+                                                                  <label class="st-flex" v-if="f.field === 'discounted_price'">
+                                                                      <input type="checkbox" :value="[i.min,i.max]" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,[i.min,i.max])">
+                                                                      <span class="st-checkbox"></span>
+                                                                      <div class="filter-label">{{currencySymbol}}{{i.min}}
+                                                                          <span v-if="i.min !== '10001'">- {{ currencySymbol }}{{ i.max }}</span>
+                                                                          <span v-else> And Above</span>
+                                                                        ({{ i.count }})
+                                                                      </div>
+<!--                                                                       <span class="number_of_product">({{ i.count }})</span> -->
+                                                                  </label>
+                                                                  <label class="st-flex" v-else-if="f.field === 'discount'">
+                                                                      <input type="checkbox" :value="[i.min,i.max]" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,[i.min,i.max])">
+                                                                      <span class="st-checkbox"></span>
+                                                                      <div class="filter-label">{{i.min}}% And Above ({{ i.count }})</div>
+<!--                                                                       <span class="number_of_product">({{ i.count }})</span> -->
+                                                                  </label>
+                                                              </div>
+                                                          </li>
+                                                      </ul>
+                                                      <ul :id=`${f.field}FilterValuesDesktop` class="filter-list-desktop" v-else>
+                                                          <li v-for="i in f.values" :class="{'st-active': isAvailabilitySelected}" :key="i">
+                                                              <div class="outer-checkbox">
+                                                                  <label class="st-flex">
+                                                                      <input type="checkbox" :value="i" @change="pushFilter()" v-model="f.selected">
+                                                                      <span class="st-checkbox"></span>
+                                                                      <div class="filter-label">{{i}}</div>
+                                                                  </label>
+                                                              </div>
+                                                          </li>
+                                                      </ul>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="st-col-md-9 st-pl30">
+                                      <div class="st-row st-mb40">
+                                          <div class="st-col-md-7 st-width100">
+                                              <div class="resut-summary-t" v-show="totalHits > 0">
+                                              <span class="result-summary text-left pull-left">
+                                                  <span>
+                                                      <span class="hidden-mobile"> Showing</span>
+                                                      <span class="st-highlight" style="padding-left: 2px;">{{ totalHits }}</span> <span
+                                                          class="st-hidden-desktop" style="padding-left: 0px;"> product<span style="display: inline;text-transform: lowercase;float: none;margin-right: 0;" v-show="totalHits > 1">s</span> for '{{query | truncate(20)}}'</span>
+
+                                                  </span>
+                                              </span>
+                                                  <span class="st-brand-outer">
+                                                 <a href="https://www.searchtap.io/?utm_source=fabricpandit&amp;utm_medium=website"
+                                                    target="_blank" class="js-no-transition">
+                                                    <div class="st-brand-txt">Powered by SearchTap</div>
+                                                    <div class="st-brand"></div>
+                                                 </a>
+                                              </span>
+                                              </div>
+                                          </div>
+                                          <div class="st-col-md-5 hidden-mobile">
+                                              <div class="st-brd-left" v-show="totalHits > 0">
+                                                  <div class="st-form-group">
+                                                      <div class="st-sort-dropdown">
+                                                      <span class="st-sorting-btn">
+                                                          <span class="st-sort-box"><span style="padding-left:5px;"> {{ sortLabel }}</span></span>
+                                                            <ul class="st-sorting">
+                                                                <li v-for="s in  sorts" :key="s.field">
+                                                                    <a :value="s.label" v-model="sortLabel" @click="sorting(s.label)" :class="{'active-sort': s.active}">{{s.label}}</a>
+                                                                </li>
+                                                            </ul>
+                                                      </span>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div class="clearfix"></div>
+                                      <div class="st-products">
+                                          <div class="st-col-md-3 st-product" v-for="item in getResults()" :key="item.id" v-show="totalHits > 0">
+                                              <div class="st-card" @click="productViewed(item.title)">
+                                                  <div class="st-shop-thumbnail-wrap">
+                                                      <a :href="getUrl(item.handle)" class="st-loop-product">
+                                                          <img class="grid-view-item__image" :class="{'single-image': item.images.length <=1 || item.images === null}" v-if="item.image !== null" :src="imageModifier(item.image)">
+                                                          <img class="grid-view-item__image" :class="{'single-image': item.images.length <=1 || item.images === null}" v-else src="https://cdn.shopify.com/s/assets/no-image-2048-5e88c1b20e087fb7bbe9a3771824e743c244f437e4f8ba93bbf7b11b53f7824c_grande.gif">
+                                                          <img src="" class="grid-view_image hover">
+                                                      </a>
+                                                      <div class="grid-product__tag grid-product__tag--sale" v-show="item.discount > 0 && item.isActive">
+                                                          Sale
+                                                      </div>
+                                                    <div class="grid-product__tag grid-product__tag--sold-out" v-show="!item.isActive">
+                                                          Sold Out
+                                                      </div>
+                                                  </div>
+                                                  <div class="product__item">
+                                                      <div class="st-shop-summary-wrap">
+                                                          <div class="st-ProductItem-Info">
+                                                              <a :href="getUrl(item.handle)" class="st-loop-product__link">
+                                                                  {{item.title}}
+                                                              </a>
+                                                            <div class="loox-rating" v-show="item.reviews_average && item.reviews_count" :data-id="item.id" :data-rating="item.reviews_average" :data-raters="item.reviews_count" data-rating-upgraded="1">
+                                                              <i class="loox-icon loox-star" v-for="index in getRangeValue(item.reviews_average)" :key="index"></i>
+                                                              <i class="loox-icon loox-star-half-o" v-show="isDecimal(item.reviews_average - parseInt(item.reviews_average))"></i>
+                                                              <i class="loox-icon loox-star-0" v-for="index in getRangeValue((5-parseInt(item.reviews_average)-isDecimal(item.reviews_average - parseInt(item.reviews_average))))"></i>
+                                                              <span>({{item.reviews_count}})</span>
+                                                            </div>
+                                                          </div>
+
+                                                          <div class="flair-badge-layout" :class=`flair-badge-layout-discounts-${item.id}`
+                                                               style="display: flex;flex-wrap: wrap;line-height: 1;margin: 10px 0px 10px 0px;flex-direction: row;align-items: center;justify-content: flex-start"
+                                                               :data-product-id="item.id"
+                                                               :data-selector=`.flair-badge-layout-discounts-${item.id}`
+                                                               data-section="flair-product-badges">
+                                                              <div class="flair-badge-wrapper flair-badge-wrapper-full "
+                                                                   style="" v-show="item.discount > 0">
+                                                                  <div class="flair-badge flair-badge-28216"
+                                                                       style="display: inline-block;box-sizing: border-box;color: #ffffff;background-color: rgba(220, 38, 38, 1);position: relative;height: 18px;max-width: 100%;vertical-align: bottom; padding-left: 14px;padding-right: 14px">
+                                                                      <div  style="white-space: nowrap;overflow: hidden;line-height: 18px;font-size: 12px">
+                                                                          {{ item.discount }}% OFF
+                                                                      </div>
+                                                                  </div>
+                                                              </div>
+                                                            <div class="flair-badge-wrapper flair-badge-wrapper-mobile " style=" display: none;">
+                                                              <div class="flair-badge flair-badge-28216" v-show="item.discount > 0" style="display: inline-block;box-sizing: border-box;color: #ffffff;background-color: rgba(220, 38, 38, 1);position: relative;height: 18px;max-width: 100%;vertical-align: bottom;border-top-left-radius: 12px;border-bottom-left-radius: 12px;padding-left: 14px;border-top-right-radius: 12px;border-bottom-right-radius: 12px;padding-right: 14px">
+                                                                <div style="white-space: nowrap;overflow: hidden;line-height: 18px;font-size: 12px">{{ item.discount }}% OFF</div>
+                                                              </div>
+                                                            </div>
+                                                              
+                                                          </div>
+                                                        <div class="flair-badge-layout" :class=`flair-no-badge-layout-${item.id}` style="line-height: 1" :data-product-id="item.id" :data-selector=`.flair-no-badge-layout-${item.id}` data-section="flair-product-badges" v-show="item.tags && item.tags.indexOf('new') > -1 && item.discount <= 0">
+                                                          <div class="flair-badge-wrapper flair-badge-wrapper-full " style="margin-top: 10px; margin-bottom: 10px;">
+                                                            <div class="flair-badge flair-badge-29310" style="display: inline-block;box-sizing: border-box;color: rgba(0, 0, 0, 1);background-color: rgba(191, 219, 254, 1);position: relative;height: 22px;max-width: 100%;vertical-align: bottom;border-top-left-radius: 12px;border-bottom-left-radius: 12px;padding-left: 14px;border-top-right-radius: 12px;border-bottom-right-radius: 12px;padding-right: 14px">
+                                                              <div style="white-space: nowrap;overflow: hidden;line-height: 22px;font-size: 14px">New</div>
+                                                            </div>
+                                                          </div>
+                                                          <div class="flair-badge-wrapper flair-badge-wrapper-mobile " style="display: none; margin-bottom: 10px;">
+                                                            <div class="flair-badge flair-badge-29310" style="display: inline-block;box-sizing: border-box;color: rgba(0, 0, 0, 1);background-color: rgba(191, 219, 254, 1);position: relative;height: 18px;max-width: 100%;vertical-align: bottom;border-top-left-radius: 12px;border-bottom-left-radius: 12px;padding-left: 14px;border-top-right-radius: 12px;border-bottom-right-radius: 12px;padding-right: 14px">
+                                                              <div style="white-space: nowrap;overflow: hidden;line-height: 18px;font-size: 12px">New</div>
+                                                            </div>
+                                                  		  </div>
+														</div>
+                                                          <div class="st-product__price">
+                                                              <span class="mrp-price" v-show="item.discount > 0">{{ currencySymbol }} {{ numberWithCommas((Math.round(item.price * 100) / 100).toFixed(2)) }}</span>&nbsp;
+                                                              <span class="final-price">{{currencySymbol}} {{numberWithCommas((Math.round(item.discounted_price*100)/100).toFixed(2))}} </span>&nbsp;
+                                                              <span class="save-price" v-show="item.discount > 0">Save {{currencySymbol}} {{Math.round(item.price - item.discounted_price).toFixed(2)}} </span>
+                                                            <span v-show="item.product_type === 'Fabric'">Per Meter</span>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                      </div>
+                                      <div class="clearfix"></div>
+                                     
+
+                                      <div class="st-pagination" v-if="!loader && results && results.length > 0 && pageCount > 1">
+                                          <Paginate :page-count="pageCount" :hide-prev-next	="true" :page-range="getPageRange" v-model="currPage" :prev-text="'<'" :next-text="'>'" :container-class="'pagination'" :page-class="'page-item'" :next-class="'page-item st-next'" :prev-class="'page-item st-prev'" :click-handler="loadMore" :break-view-class="'st-break-view'"></Paginate>
+                                      </div>
+
+                                      <div class="filter-bar hidden-desktop" v-show="totalHits > 0">
+
+                                          <div class="st-overlay-active" v-show="showMobileSort === true">
+                                              <div class="st-sorting-wrapper">
+                                                  <div class="st-sorting-inner">
+                                                      <ul class="list">
+                                                          <li class="sortby">
+                                                              <div class="st-sort-cross" @click="showMobileSort = false">
+                                                                  <svg role="presentation" viewBox="0 0 16 14" class="Icon Icon--close"><path d="M15 0L1 14m14 0L1 0" stroke="currentColor" fill="none" fill-rule="evenodd"></path></svg>
+                                                              </div>
+                                                              Sort by
+                                                          </li>
+                                                          <li v-for="s in sorts">
+                                                              <div class="ripple-container">
+                                                                  <button :value="s.label" @click="sorting(s.label)" v-model="sortLabel" :class="{'active-sort':s.active === true}">
+                                                                      <span class="sortByValues"> {{s.label}}</span>
+                                                                  </button>
+                                                              </div>
+                                                          </li>
+                                                      </ul>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <div id="sortFilter" class="sortFilterCon">
+                                              <div class="filter_h" @click="showMobileFilter = true">
+                                                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-filter" viewBox="0 0 64 64"><path d="M48 42h10M48 42a5 5 0 1 1-5-5 5 5 0 0 1 5 5zM7 42h31M16 22H6M16 22a5 5 0 1 1 5 5 5 5 0 0 1-5-5zM57 22H26"></path></svg>
+                                                  <span class="filter-applied-ellip" v-show="filterCount > 0  || showSliderReset"></span>
+                                                <span class="disInBlock">Filter <span v-show="filterCount > 0">({{filterCount}})</span></span>
+                                              </div>
+                                              <div class="sort_h" @click="showMobileSort = true">
+                                                  <span class="tabIcon sortIcon"></span>
+                                                  <span class="filter-applied-ellip" v-show="sortLabel !== 'Relevance'"></span>
+                                                  <span class="disInBlock">Sort by</span>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+
+                          </div>
+                          <div id="searchFilterMobile" class="hidden-desktop" v-show="showMobileFilter">
+                              <div id="mobile-filter">
+                                  <div class="mobile-filter-popup">
+                                      <div class="filter-list">
+                                          <div class="filterHeader"> Filter
+                                              <span class="pull-right">
+                                                  <span class="st-reset-all-mobile" v-show="filterCount > 0 || showSliderReset" @click="clearFilters()">Clear All</span>
+                                                  <div class="st-close-div" @click="showMobileFilter = false,goToTop()">
+                                                      <div class="st-mobile-cross"></div>
+                                                  </div>
+                                              </span>
+                                          </div>
+                                          <div class="st-row">
+                                            
+                                              <div class="filter-body">
+                                                <div class="filter-tag-column st-width" v-if="allSelectedFilters.length > 0">
+                                            <div class="st-filter-tags">
+                                                <div class="st-filter-inner">
+                                                    <div class="tag-item" v-for="filter in allSelectedFilters" :key="filter.field" @click="clearSingleFilter(filter.selected,filter.field)">
+                                                        <div class="tag-content" v-if="filter.type !== 'numericFacet'">
+                                                            <span class="st-filter-selected-value">{{filter.selected}}</span>
+                                                        </div>
+                                                        <div class="tag-content" v-else>
+                                                            <span class="st-filter-selected-value" v-if="filter.title === 'Discount'">
+                                                            {{filter.selected[0]}}% And Above
+                                                        </span>
+                                                           
+
+                                                        </div>
+                                                      <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.12L19 44.74"></path></svg>
+                                                    </div>
+                                                    
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                                
+                                                  <div class="mobileFilters" v-show="!sliderDisable">
+                                                      <div class="panel-heading" @click="showSlider = !showSlider">
+                                                          <h4 class="panel-title">
+                                                              <span class="filter-clear" v-show="showSliderReset" v-on:click.stop="resetSlider">Clear</span>
+                                                              <span :class="[showSlider ? 'st-up-arrow' : 'st-down-arrow','st-arrows']"></span>
+                                                              <span class="panel-title-heading">Price</span>
+                                                          </h4>
+                                                      </div>
+                                                      <div class="price-slider" v-show="showSlider">
+                                                        <div class="slider-inputs">
+                                                              <div class="slider-min">
+                                                                  <label>
+                                                                      {{ currencySymbol }}
+                                                                      <input v-model="sliderValue[0]" type="number" v-on:keyup.enter="setSlider" min="0" inputmode="numeric" pattern="[0-9]*" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');"/>
+                                                                  </label>
+                                                              </div>
+                                                              <div class="slider-max">
+                                                                  <label>
+                                                                      {{ currencySymbol }}
+                                                                      <input v-model="sliderValue[1]" type="number"  v-on:keyup.enter="setSlider" min="0" inputmode="numeric" pattern="[0-9]*" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');"/>
+                                                                  </label>
+                                                              </div>
+                                                              <!--                                                      <div class="apply-btn"><span class="apply-slider" @click="setSlider">Go</span></div>-->
+                                                          </div>
+                                                          <vue-slider :contained="true" ref="mobileSlider"
+                                                                      @change="sliderChange"
+                                                                      height="5px"
+                                                                      :min="sliderMin"
+                                                                      :max="sliderMax"
+                                                                      :lazy="true"
+                                                                      :silent="true"
+                                                                      v-model="sliderValue"></vue-slider>
+                                                          
+                                                  </div>
+                                                    </div>
+                                                  <div class="mobileFilters" v-for="f in filters" :key="f.title" v-show="f.values.length>0 || f.selected.length>0 || f.type === 'singleStatic'">
+                                                      <div class="panel-heading" @click="f.isOpen = !f.isOpen">
+                                                          <h4 class="panel-title">
+                                                              <span class="filter-clear" v-show="f.selected.length > 0" @click.stop="clearFilters(f.field)">Clear</span>
+                                                              <span :class="[f.isOpen ? 'st-up-arrow' : 'st-down-arrow','st-arrows']"></span>
+                                                              <span class="panel-title-heading">{{f.title}}</span>
+                                                          </h4>
+                                                      </div>
+                                                      <div>
+                                                          <ul class="list-group non-static-filters" :id=`${f.field}FilterValues` v-if="f.type === 'textFacet'" v-show="f.isOpen">
+                                                              <li class="list-group-item selected-list st-active" v-for="i in f.selected" :key="i">
+                                                                  <div class="checkbox">
+                                                                      <label>
+                                                                          <input type="checkbox" :value="i" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,i)">
+                                                                          <span class="cr">
+                                                                             
+                                                                          </span>
+                                                                          <span class="filter-label">{{i}} ({{getSelectedCount(i,f.field)}})</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </li>
+                                                              <li class="list-group-item selected-list" v-for="i in getNotSelectedFilters(f.field)" :key="i.name">
+                                                                  <div class="checkbox">
+                                                                      <label>
+                                                                          <input type="checkbox" :value="i.name" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,i.name)">
+                                                                          <span class="cr">
+                                                                             
+                                                                          </span>
+                                                                          <span class="filter-label">{{i.name}} ({{i.count}})</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </li>
+                                                          </ul>
+                                                          <ul class="list-group non-static-filters" :id=`${f.field}FilterValues` v-else-if="f.type === 'numericFacet'" v-show="f.isOpen">
+                                                              <li class="list-group-item selected-list st-active" v-for="i in f.selected" :key="i[0]">
+                                                                  <div class="checkbox">
+                                                                      <label>
+                                                                          <input type="checkbox" :value="[i[0],i[1]]" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,[i[0],i[1]])">
+                                                                          <span class="cr">
+                                                                              
+                                                                          </span>
+                                                                          <span class="filter-label">{{ i[0] }}% And Above ({{getSelectedCount(i,f.field)}})</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </li>
+                                                              <li class="list-group-item selected-list" v-for="i in getNotSelectedFilters(f.field)" :key="i.min">
+                                                                  <div class="checkbox">
+                                                                      <label>
+                                                                          <input type="checkbox" :value="[i.min,i.max]" v-model="f.selected" @change="pushFilter(),filterAnalytics('left',f.title,[i.min,i.max])">
+                                                                          <span class="cr">
+                                                                              
+                                                                          </span>
+                                                                          <span class="filter-label">{{ i.min }}% And Above ({{i.count}})</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </li>
+                                                          </ul>
+                                                          <ul class="list-group non-static-filters" :id=`${f.field}FilterValues` v-else v-show="f.isOpen">
+                                                              <li class="list-group-item selected-list" :class="{'st-active': isAvailabilitySelected}" v-for="i in f.values" :key="i">
+                                                                  <div class="checkbox">
+                                                                      <label>
+                                                                          <input type="checkbox" :value="i" v-model="f.selected" @change="pushFilter()">
+                                                                          <span class="cr">
+                                                                              
+                                                                          </span>
+                                                                          <span class="filter-label">{{i}}</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </li>
+                                                          </ul>
+
+                                                      </div>
+                                                  </div>
+                                              
+                                          </div>
+                                      </div>
+                                      <div class="apply-all" @click="showMobileFilter = false,goToTop()">
+                                          <a class="apply-btn">Apply Filter</a>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                        
+                      </div>
+                         <div id="st-back-top" v-show="backToTop" class="back-top"  @click="goToTop()">
+                              <a href="#" rel="tooltip" data-original-title="Top" class="js-no-transition"></a>
+                          </div>
+                      <div id="overlay">
+                          <div class="container" v-show="totalHits === 0 && !loader">
+                              <h2 class="page-heading">No Results found <span>for '{{query | truncate(20)}}'</span></h2>
+                              <div class="search-pform">
+                                  <p>Try searching some other keywords <span v-show="filterCount>0">or try <a class="highlight-text" @click="clearFilters()">clearing</a> some filters</span></p>
+                                  <br><p v-show="bestSellers">Have a look at some of our bestsellers!!!</p>
+                              </div>
+                              <div class="st-products">
+                                  <div class="st-col-md-3 st-product" v-for="item in getResults()" :key="item.id" v-show="totalHits === 0">
+                                      <div class="st-card" @click="productViewed(item.title)">
+                                          <div class="st-shop-thumbnail-wrap">
+                                              <a :href="getUrl(item.handle)" class="st-loop-product">
+                                                  <img class="grid-view-item__image" :class="{'single-image': item.images.length <=1 || item.images === null}" v-if="item.image !== null" :src="imageModifier(item.image)">
+                                                  <img class="grid-view-item__image" :class="{'single-image': item.images.length <=1 || item.images === null}" v-else src="https://cdn.shopify.com/s/assets/no-image-2048-5e88c1b20e087fb7bbe9a3771824e743c244f437e4f8ba93bbf7b11b53f7824c_grande.gif">
+                                                  <img src="" class="grid-view_image hover">
+                                              </a>
+                                              <div class="grid-product__tag grid-product__tag--sale" v-show="item.discount > 0 && item.isActive">
+                                                          Sale
+                                                      </div>
+                                                    <div class="grid-product__tag grid-product__tag--sold-out" v-show="!item.isActive">
+                                                          Sold Out
+                                                      </div>
+                                          </div>
+                                          <div class="product__item">
+                                              <div class="st-shop-summary-wrap">
+                                                  <div class="st-ProductItem-Info">
+                                                      <a :href="getUrl(item.handle)" class="st-loop-product__link">
+                                                          {{item.title}}
+                                                      </a>
+                                                     <div class="loox-rating" v-show="item.reviews_average && item.reviews_count" :data-id="item.id" :data-rating="item.reviews_average" :data-raters="item.reviews_count" data-rating-upgraded="1">
+                                                              <i class="loox-icon loox-star" v-for="index in getRangeValue(item.reviews_average)" :key="index"></i>
+                                                              <i class="loox-icon loox-star-half-o" v-show="isDecimal(item.reviews_average - parseInt(item.reviews_average))"></i>
+                                                              <i class="loox-icon loox-star-0" v-for="index in getRangeValue((5-parseInt(item.reviews_average)-isDecimal(item.reviews_average - parseInt(item.reviews_average))))"></i>
+                                                              <span>({{item.reviews_count}})</span>
+                                                            </div>
+                                                  </div>
+
+                                                  <div class="flair-badge-layout" :class=`flair-badge-layout-discounts-${item.id}`
+                                                       style="display: flex;flex-wrap: wrap;line-height: 1;margin: 10px 0px 10px 0px;flex-direction: row;align-items: center;justify-content: flex-start" v-show="item.discount > 0"
+                                                       data-product-id="6782417010863"
+                                                       data-selector=`.flair-badge-layout-discounts-${item.id}`
+                                                       data-section="flair-product-badges">
+                                                      <div class="flair-badge-wrapper flair-badge-wrapper-full "
+                                                           style="">
+                                                          <div class="flair-badge flair-badge-28216"
+                                                               style="display: inline-block;box-sizing: border-box;color: #ffffff;background-color: rgba(220, 38, 38, 1);position: relative;height: 18px;max-width: 100%;vertical-align: bottom; padding-left: 14px;padding-right: 14px">
+                                                              <div  style="white-space: nowrap;overflow: hidden;line-height: 18px;font-size: 12px">
+                                                                  {{ item.discount }}% OFF
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                    <div class="flair-badge-wrapper flair-badge-wrapper-mobile " style=" display: none;">
+                                                              <div class="flair-badge flair-badge-28216" style="display: inline-block;box-sizing: border-box;color: #ffffff;background-color: rgba(220, 38, 38, 1);position: relative;height: 18px;max-width: 100%;vertical-align: bottom;border-top-left-radius: 12px;border-bottom-left-radius: 12px;padding-left: 14px;border-top-right-radius: 12px;border-bottom-right-radius: 12px;padding-right: 14px">
+                                                                <div style="white-space: nowrap;overflow: hidden;line-height: 18px;font-size: 12px">{{ item.discount }}% OFF</div>
+                                                              </div>
+                                                            </div>
+                                                     
+                                                  </div>
+                                                <div class="flair-badge-layout" :class=`flair-no-badge-layout-${item.id}` style="line-height: 1" :data-product-id="item.id" :data-selector=`.flair-no-badge-layout-${item.id}` data-section="flair-product-badges" v-show="item.tags && item.tags.indexOf('new')> -1 && item.discount <= 0">
+                                                          <div class="flair-badge-wrapper flair-badge-wrapper-full " style="margin-top: 10px; margin-bottom: 10px;">
+                                                            <div class="flair-badge flair-badge-29310" style="display: inline-block;box-sizing: border-box;color: rgba(0, 0, 0, 1);background-color: rgba(191, 219, 254, 1);position: relative;height: 22px;max-width: 100%;vertical-align: bottom;border-top-left-radius: 12px;border-bottom-left-radius: 12px;padding-left: 14px;border-top-right-radius: 12px;border-bottom-right-radius: 12px;padding-right: 14px">
+                                                              <div style="white-space: nowrap;overflow: hidden;line-height: 22px;font-size: 14px">New</div>
+                                                            </div>
+                                                          </div>
+                                                  		  <div class="flair-badge-wrapper flair-badge-wrapper-mobile " style="display: none;margin-bottom: 10px;">
+                                                            <div class="flair-badge flair-badge-29310" style="display: inline-block;box-sizing: border-box;color: rgba(0, 0, 0, 1);background-color: rgba(191, 219, 254, 1);position: relative;height: 18px;max-width: 100%;vertical-align: bottom;border-top-left-radius: 12px;border-bottom-left-radius: 12px;padding-left: 14px;border-top-right-radius: 12px;border-bottom-right-radius: 12px;padding-right: 14px">
+                                                              <div style="white-space: nowrap;overflow: hidden;line-height: 18px;font-size: 12px">New</div>
+                                                            </div>
+                                                  		  </div>
+												 </div>
+                                                  <div class="st-product__price">
+                                                      <span class="mrp-price" v-show="item.discount > 0">{{ currencySymbol }} {{ numberWithCommas((Math.round(item.price * 100) / 100).toFixed(2)) }}</span>&nbsp;
+                                                      <span class="final-price">{{currencySymbol}} {{numberWithCommas((Math.round(item.discounted_price*100)/100).toFixed(2))}} </span>&nbsp;
+                                                      <span class="save-price" v-show="item.discount > 0">Save {{currencySymbol}} {{Math.round(item.price - item.discounted_price).toFixed(2)}} </span>
+                                                    <span v-show="item.product_type === 'Fabric'">Per Meter</span>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div id="overlay1" v-show="errorEncountered && !loader && isOpen">
+              <div class="container">
+                  <h2>Oops!!! Something Went Wrong</h2>
+                  <p>Please, try <a href="" onclick="location.reload()" class="highlight-text">reloading</a> page or go back to <a class="highlight-text" :href=getHomePageUrl>Home</a> page</p>
+              </div>
+          </div>
+    </div>
+
+
+{% endraw %}
+
+
+
+
+{% schema %}
+  {
+    "name": "searchtap",
+    "settings": []
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

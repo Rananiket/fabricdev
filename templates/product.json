@@ -1,0 +1,101 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "price": {
+          "type": "price",
+          "settings": {
+          }
+        },
+        "6d642e01-e113-4db5-858f-a23ee674e526": {
+          "type": "separator",
+          "settings": {
+          }
+        },
+        "4a7501f6-b186-4246-a519-ebc2b1dec0db": {
+          "type": "custom",
+          "settings": {
+            "code": "<h3><strong>✅ Available Offers<\/strong><\/h3><p>⭐️ Flat 10% OFF On First Order, Use Code <u>MYFIRST<\/u> (on orders above Rs.500)<br>⭐️ Free Shipping On Orders Above Rs.500"
+          }
+        },
+        "201db2f2-7c4d-46c5-b774-a3f8d52f3e35": {
+          "type": "separator",
+          "settings": {
+          }
+        },
+        "b3925fe1-0ec4-43ca-911f-6de45cb92f94": {
+          "type": "quantity_selector",
+          "settings": {
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "surface_pickup_enable": true
+          }
+        }
+      },
+      "block_order": [
+        "price",
+        "6d642e01-e113-4db5-858f-a23ee674e526",
+        "4a7501f6-b186-4246-a519-ebc2b1dec0db",
+        "201db2f2-7c4d-46c5-b774-a3f8d52f3e35",
+        "b3925fe1-0ec4-43ca-911f-6de45cb92f94",
+        "buy_buttons"
+      ],
+      "settings": {
+        "sku_enable": false,
+        "image_position": "left",
+        "image_size": "medium",
+        "product_zoom_enable": true,
+        "thumbnail_position": "beside",
+        "thumbnail_arrows": true,
+        "mobile_layout": "full",
+        "enable_video_looping": true,
+        "product_video_style": "muted"
+      }
+    },
+    "sub": {
+      "type": "product-full-width",
+      "settings": {
+        "max_width": false
+      }
+    },
+    "loox-product-reviews-app-section": {
+      "type": "apps",
+      "settings": {
+        "full_width": false,
+        "space_around": true
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "show_product_recommendations": true,
+        "product_recommendations_heading": "You may also like",
+        "related_count": 5
+      }
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "recent_count": 5
+      }
+    },
+    "collection-return": {
+      "type": "collection-return",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "main",
+    "sub",
+    "loox-product-reviews-app-section",
+    "product-recommendations",
+    "recently-viewed",
+    "collection-return"
+  ]
+}

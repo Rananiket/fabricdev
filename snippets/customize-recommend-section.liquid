@@ -1,0 +1,169 @@
+<style>
+  .customize-recommend-section .image-wrap .animate-me,.customize-recommend-section .image-wrap img:not([role=presentation]),.customize-recommend-section .image-wrap svg{
+    opacity:1
+  }
+  #frequently-recommend-section {
+    padding-top: 30px;
+  }
+  .customize-recommend-section .grid {
+    border: 1px solid #D8DFFC;
+    margin: 0px -10px;
+    border-radius: 3px;
+    border-top-left-radius: unset;
+    border-top-right-radius: 0;
+    transform: none;
+  }
+  .customize-recommend-section .grid-product{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 0;
+  }
+  .customize-recommend-section .grid-product:first-child {
+    padding-bottom: 0; 
+  }
+  .customize-recommend-section .grid-product__image-mask {
+    width: 25%;
+    border-radius: 5px;
+  }
+  .customize-recommend-section .grid-product__meta {
+    padding: 0 0 0 10px;
+    width: 75%;
+    flex: 1 1 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .customize-recommend-section a.grid-product__link {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .customize-recommend-section .grid-product__content {
+    padding-top: 10px;
+    border-top: 1px solid #D8DFFC;
+    padding-bottom: 20px;
+  }
+  .customize-recommend-section .grid-product:first-child .grid-product__content {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .customize-recommend-section .grid-product__title.grid-product__title--body {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .customize-recommend-section .grid-product__price {
+    font-weight: 500;
+  }
+  .customize-recommend-section .grid-product__price .grid-product__price--savings {
+    display: block;
+    margin-left: 0;
+  }
+  .customize-recommend-section .quick-product__btn,
+  .customize-recommend-section .grid-product__tag,
+  .customize-recommend-section .loox-rating,
+  .customize-recommend-section .flair-badge-wrapper,
+  .customize-recommend-section .flair-badge-layout{
+    display: none;
+  }
+  .frequently-recommend-section .section-header {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #D8DFFC;
+    margin: 0px -10px;
+    border: 1px solid #D8DFFC;
+    border-radius: 3px;
+    border-end-end-radius: unset;
+    border-end-start-radius: 0;
+  }
+  .customize-recommend-section .grid-product__meta .price-addToCart-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .customize-recommend-section input#add-to-cart-button {
+    font-size: 13px !important;
+    font-weight: 600;
+    line-height: 13px;
+    color: #6C80E7;
+    border-radius: 3px;
+    border: 2px solid #6C80E7;
+    padding: 8px;
+    display: block;
+    float: right;
+    cursor: pointer;
+  }
+  .customize-recommend-section .recomend-addToCart_btn {
+    text-align: right;
+/*     margin-top: -20px; */
+    z-index: 999;
+    position: absolute;
+    top: 80%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+  }
+  @media screen and (max-width:768px){
+    .frequently-recommend-section .section-header{
+      padding: 8px 0;
+      margin: 0;
+    }
+    .customize-recommend-section .grid{
+      margin: 0;
+    }
+    .customize-recommend-section .flair-badge-wrapper-mobile {
+      display: none !important;
+    }
+    .customize-recommend-section .grid-product__content {
+      padding-bottom: 30px;
+    }
+  }
+  @media screen and (max-width:320px){
+    .customize-recommend-section input#add-to-cart-button {
+      font-size: 11px !important;
+      line-height: 11px;
+    }
+  }
+</style>
+
+<script>
+  function getRecommendProducts() {
+    var cartContents = fetch('/cart.js')
+    .then(response => response.json())
+    .then( function(data) {
+      //          console.log(data);
+      //         console.log(data.items[0].product_id);
+      //console.log(data.item_count,'count');
+      var x = document.getElementById("frequentlyRecommendSection");
+      if(data.item_count > 0){
+        var id= data.items[0].product_id;
+        var productRecommendationsSection = document.getElementsByClassName("customize-recommend-section");
+        fetch("/recommendations/products?product_id="+id+"&limit=2&section_id=template--15263771951268__product-recommendations")
+        .then(response => response.text())
+        .then((text) => {
+          const html = document.createElement('div');
+          html.innerHTML = text;
+//           console.log(text);
+          const recommendations = html.querySelector('.product-recommendations');
+//           console.log(recommendations);
+          if (recommendations && recommendations.innerHTML.trim().length) {
+            var  productRecommendationsSectionTitle = document.getElementById("customize-recommend-section-title");
+            productRecommendationsSectionTitle.textContent  = "Frequently Bought Together";
+            for(var i = 0; i < productRecommendationsSection.length; i++)
+            {
+              productRecommendationsSection[i].innerHTML = recommendations.innerHTML;
+            }
+          }x.style.display = "block";
+        });
+      }else {
+        x.style.display = "none";
+      }
+    });
+  }
+  $(window).on("load", function () {
+    getRecommendProducts();
+  });
+  document.addEventListener('ajaxProduct:added', function(evt) {
+    getRecommendProducts();
+  });
+  document.addEventListener('cart:updated', function(evt) {
+    getRecommendProducts();
+  });
+</script>

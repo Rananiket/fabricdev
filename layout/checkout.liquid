@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+    <title>{{ page_title }}</title>
+    {{ content_for_header }}
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+    <script type="text/javascript">
+      let checkoutShippingObj = {{ checkout.shipping_address | json }};
+      let checkoutTotalPrice = parseInt("{{ checkout.total_price | money_without_currency }}");
+      let shippingMethod = "{{ checkout.shipping_method.title }}";
+    </script>
+    <script src="{{ 'fps-checkout-step-one-new.js' | asset_url }}"></script>
+    <script src="{{ 'fps-checkout-step-three-new.js' | asset_url }}"></script>
+    <script>
+      (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:2411083,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+      })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>  
+  </head>
+
+  <body class="checkout_body-wrapper">
+    {{ skip_to_content_link }}
+    <div class="content checkout_content-wrap" data-content>
+      <header class="main__header" role="banner">
+        {{ content_for_logo }}
+        {{ breadcrumb }}
+        {{ alternative_payment_methods }}
+      </header>
+      <div class="wrap checkout--main_wrap{% if content_for_layout contains 'stock_problems' %}stock-wrapper_box{% endif %}">
+        <div class="checkout_box-section {% if content_for_layout contains 'data-step="contact_information"' %} contact_discount-box {% endif %} {% if content_for_layout contains 'data-step="payment_method"' %} payment-checkout-box-section{% endif %}{% if content_for_layout contains 'stock_problems' %}stock-problems{% endif %}">
+          {{ order_summary_toggle }}
+          <div class="wrap-box">
+            <div class="main checkout--main_wrap{% if content_for_layout contains 'data-step="contact_information"' %} active {% endif %}">
+              <h4 class="title_checkmark{% if content_for_layout contains 'data-step="payment_method"' %} checkbox-green {% endif %} mobile-hide">
+                {% if content_for_layout contains 'data-step="contact_information"' %}
+                <a href="/checkout?step=contact_information">1. Customer Information</a>
+                {% else %}
+                <a href="/checkout?step=contact_information">1. Customer Information</a>
+                {% endif %}
+              </h4>
+              <main class="main__content" role="main">
+                {% unless content_for_layout contains 'data-step="payment_method"' %}
+                {{ content_for_layout }}
+                {% endunless %}
+                {% if content_for_layout contains 'data-step="payment_method"' %} 
+                <div class="shipping-addres_box">
+                  <div class="shipping-address_link">
+                    <h4 class="title shipping_box">Shipping Address</h4>
+                    <a href="/checkout?step=contact_information">Change</a>
+                  </div>
+                  <div class="shipping-address_content-wrap">
+                    <p>{{ checkout.shipping_address.first_name }}
+                      {{ checkout.shipping_address.last_name }}</p>
+                    <p>{{ checkout.email }}</p>
+                    <br><br>
+                    {{ checkout.shipping_address.street }}
+                    {{ checkout.shipping_address2 }}
+                    <br>
+                    {{ checkout.shipping_address.city }}
+                    {{ checkout.shipping_address.province }}
+                    <br>
+                    {{ checkout.shipping_address.zip }}
+                  </div>
+                </div>
+                {% endif %}
+              </main>
+              <footer class="main__footer mobile-hide" role="contentinfo">
+                {{ content_for_footer }}
+              </footer>
+            </div>
+            <aside class="sidebar checkout--sidebar_wrap{% if content_for_layout contains 'data-step="payment_method"' %} active payment-sidebar{% endif %}" role="complementary">
+              <div class="sidebar__header">
+                {{ content_for_logo }}
+              </div>
+              <h4 class="title_checkmark mobile-hide">
+                <a href="#">2. Billing</a>
+              </h4>
+              <div class="sidebar__content">
+                {{ content_for_order_summary }}
+                {% if content_for_layout contains 'data-step="payment_method"' %} 
+                <div class="shipping-addres_box desktop-hide">
+                  <div class="step__sections payment-step_sections">
+                    <div class="section section--contact-information">
+                      <div class="section__header shipping-address_link">
+                        <div class="layout-flex layout-flex--tight-vertical layout-flex--loose-horizontal layout-flex--wrap">
+                          <h2 class="section__title layout-flex__item layout-flex__item--stretch" id="main-header" tabindex="-1">
+                            Contact information
+                          </h2>
+                        </div>
+                        <a href="/checkout?step=contact_information">Change</a>
+                      </div>
+                      <div class="section__content" data-section="customer-information" data-shopify-pay-validate-on-load="false">
+                        <div class="fieldset">
+                          <div class="field field--required field--half field--show-floating-label" data-address-field="first_name">
+                            <div class="field__input-wrapper">
+                              <label class="field__label field__label--visible" for="checkout_shipping_address_first_name">First name</label>
+                              <input placeholder="First name" autocomplete="shipping given-name" autocorrect="off" data-backup="first_name" class="field__input" aria-required="true" size="30" type="text" value="{{ checkout.shipping_address.first_name }}" name="checkout[shipping_address][first_name]" id="checkout_shipping_address_first_name" data-autofocus="true">
+                            </div>
+                          </div>
+                          <div class="field field--required field--half field--show-floating-label" data-address-field="last_name">
+                            <div class="field__input-wrapper">
+                              <label class="field__label field__label--visible" for="checkout_shipping_address_last_name">Last name</label>
+                              <input placeholder="Last name" autocomplete="shipping family-name" autocorrect="off" data-backup="last_name" class="field__input" aria-required="true" size="30" type="text" value="{{ checkout.shipping_address.last_name }}" name="checkout[shipping_address][last_name]" id="checkout_shipping_address_last_name">
+                            </div>
+                          </div>
+                          <div data-shopify-pay-email-flow="false" class="field field--required field--show-floating-label">
+                            <div class="field__input-wrapper"><label class="field__label field__label--visible" for="checkout_email">Email</label>
+                              <input placeholder="Email" autocapitalize="off" spellcheck="false" autocomplete="shipping email" data-backup="customer_email" aria-describedby="checkout-context-step-one" aria-required="true" class="field__input" size="30" type="email" value="{{ checkout.email }}" name="checkout[email]" id="checkout_email">
+                            </div>
+                          </div>
+                          <div data-address-field="phone" class="field field--required field--show-floating-label">
+                            <div class="field__input-wrapper field__input-wrapper--icon-right">
+                              <label class="field__label field__label--visible" for="checkout_shipping_address_phone">Phone</label>
+                              <input placeholder="Phone" autocomplete="shipping tel" autocorrect="off" data-backup="phone" data-phone-formatter="true" data-phone-formatter-country-select="[name='checkout[shipping_address][country]']" class="field__input field__input--numeric" aria-required="true" size="30" type="tel" value="{{ checkout.shipping_address.phone }}" name="checkout[shipping_address][phone]" id="checkout_shipping_address_phone" data-phone-formatter-country-code="91">
+                            </div>
+                          </div>
+                        </div>
+                      </div> 
+                    </div> 
+                    <div class="section section--shipping-address" data-shipping-address="">
+                      <div class="section__header shipping-address_link">
+                        <h2 class="section__title" id="section-delivery-title">
+                          Shipping address
+                        </h2>
+                      </div>
+                      <div class="section__content">
+                        <div class="fieldset">
+                          <div class="address-fields" data-address-fields="">
+                            <div class="field field--required field--show-floating-label" data-autocomplete-field-container="true">
+                              <div class="field__input-wrapper"><label class="field__label field__label--visible" for="checkout_shipping_address_zip">PIN code</label>
+                                <input placeholder="PIN code" autocomplete="shipping postal-code" autocorrect="off" data-backup="zip" class="field__input field__input--zip" aria-required="true" size="30" type="text" value="{{ checkout.shipping_address.zip }}" name="checkout[shipping_address][zip]" id="checkout_shipping_address_zip">
+                              </div>
+                            </div>
+                            <div data-address-field="address1" data-autocomplete-field-container="true" class="field field--required field--show-floating-label">
+                              <div class="field__input-wrapper"><label class="field__label field__label--visible" for="checkout_shipping_address_address1">Address (House No, Building, Street)</label>
+                                <input placeholder="Address (House No, Building, Street)" autocomplete="shipping street-address" autocorrect="off" data-backup="address1" class="field__input" aria-required="true" size="30" type="text" value="{{ checkout.shipping_address.street }}" name="checkout[shipping_address][address1]" id="checkout_shipping_address_address1">
+                              </div>
+                            </div>
+                            <div data-address-field="city" data-autocomplete-field-container="true" class="field field--required field--third field--show-floating-label">
+                              <div class="field__input-wrapper">
+                                <label class="field__label field__label--visible" for="checkout_shipping_address_city" style="opacity: 1;">City</label>
+                                <input placeholder="City" autocomplete="shipping address-level2" autocorrect="off" data-backup="city" class="field__input" aria-required="true" size="30" type="text" value="{{ checkout.shipping_address.city }}" name="checkout[shipping_address][city]" id="checkout_shipping_address_city" readonly="readonly">
+                              </div>
+                            </div>
+                            <div class="field field--required field--show-floating-label field--third" data-address-field="province" data-autocomplete-field-container="true">
+                              <div class="field__input-wrapper field__input-wrapper--select">
+                                <label class="field__label field__label--visible" for="checkout_shipping_address_province">State</label>
+                                <select placeholder="State" autocomplete="shipping address-level1" autocorrect="off" data-backup="province" class="field__input field__input--select" aria-required="true" name="checkout[shipping_address][province]" id="checkout_shipping_address_province" style="pointer-events: none;"><option disabled="">State</option>
+                                  <option data-alternate-values="{{ checkout.shipping_address.province }}" value="{{ checkout.shipping_address.province_code }}">{{ checkout.shipping_address.province }}</option></select>
+                                <div class="field__caret shown-if-js">
+                                  <svg class="icon-svg icon-svg--color-adaptive-lighter icon-svg--size-10 field__caret-svg" role="presentation" aria-hidden="true" focusable="false"> <use xlink:href="#caret-down"></use> </svg>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="field field--required field--show-floating-label field--third" data-autocomplete-field-container="true">
+                              <div class="field__input-wrapper field__input-wrapper--select">
+                                <label class="field__label field__label--visible" for="checkout_shipping_address_country">Country/region</label>
+                                <select size="1" autocomplete="shipping country" data-backup="country" class="field__input field__input--select" aria-required="true" name="checkout[shipping_address][country]" id="checkout_shipping_address_country" placeholder="Country/region" style="pointer-events: none;">
+                                  <option data-code="{{ checkout.shipping_address.country_code }}" selected="selected" value="{{ checkout.shipping_address.country }}">India</option>
+                                </select>
+                                <div class="field__caret">
+                                  <svg class="icon-svg icon-svg--color-adaptive-lighter icon-svg--size-10 field__caret-svg" role="presentation" aria-hidden="true" focusable="false"> <use xlink:href="#caret-down"></use> </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div> 
+                    </div>
+                  </div>
+                  <div class="step__footer" data-step-footer="" style="margin-top: 0px;">
+                    <button name="button" type="submit" id="continue_button" class="step__footer__continue-btn btn" aria-busy="false">
+                      <span class="btn__content-box">Continue to payment method</span>
+                    </button>
+                  </div>
+                  <div class="overlay"></div>
+                </div>
+                {% endif %}
+                {% if content_for_layout contains 'data-step="payment_method"' %}
+                {{ content_for_layout }}
+                {% endif %}
+                {% if content_for_layout contains 'data-step="contact_information"' %}
+                <div class="contact_payment-method mobile-hide">
+                  <h2 class="payment-msg">Payment is Loading...</h2>
+                </div>
+                {% endif %}
+              </div>
+              {% if content_for_layout contains 'data-step="contact_information"' %}
+              <div class="overlay mobile-hide"></div>
+              {% endif %}
+              {{ checkout.payment_gateway}}
+            </aside>
+          </div>
+          <div class="sidebar checkout--sidebar_wrap mobile_payment_box">
+            {% if content_for_layout contains 'data-step="contact_information"' %}
+            <div class="contact_payment-method desktop-hide">
+              <h2 class="payment-msg">Payment is Loading...</h2>
+            </div>
+            {% endif %}
+            {% if content_for_layout contains 'data-step="contact_information"' %}
+            <div class="overlay"></div>
+            {% endif %}
+          </div>
+          <footer class="main__footer desktop-hide" role="contentinfo">
+            {{ content_for_footer }}
+          </footer>
+        </div>
+      </div>
+    </div>
+    {{ tracking_code }}
+  </body>
+</html>
+
+<style>
+  body.checkout_body-wrapper {
+    position: relative;
+  }
+/*   .checkout_content-wrap {
+    padding-bottom: 4rem;
+  } */
+  .anyflexbox .wrap.checkout--main_wrap {
+/*     margin: 0 auto; */
+    display: block;
+/*     padding: 0 15px; */
+  }
+  .checkout_box-section {
+    border: 1px solid #333;
+/*     margin-bottom: 40px;
+    box-sizing: border-box;
+    padding: 0;
+    display: block; */
+  } 
+  h4.title_checkmark {
+    position: relative;
+    padding: 10px;
+/*     letter-spacing: 1.3px; */
+    font-weight: 700;
+/*     text-shadow: none; */
+    font-size: 20px;
+    background: #fff;
+    text-align: center;
+    border: 4px solid #000;
+    text-transform: uppercase;
+    letter-spacing: .1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .active h4.title_checkmark,
+  .active .title_checkmark {
+    background: #000;
+/*     display: flex;
+    justify-content: center;
+    align-items: center; */
+  }
+  h4.title_checkmark:before {
+    content: "";
+    background: url(https://cdn.shopify.com/s/files/1/1188/2592/files/checktmc_black_c92b1e49-e199-47ff-bd1e-dbde0ca8545a.png?6984540763922677915) no-repeat;
+    background-size: 15px;
+    background-position: center;
+    display: inline-block;
+/*     overflow: visible; */
+    width: 6px;
+    height: 16px;
+    padding-left: 10px;
+  }
+  .active h4.title_checkmark:before {
+    background: url(https://cdn.shopify.com/s/files/1/1188/2592/files/checktmc.png) no-repeat;
+  }
+  h4.title_checkmark.checkbox-green:before {
+    background: url(https://cdn.shopify.com/s/files/1/1188/2592/files/RIGHT.png?1658392…) no-repeat;
+    content: "";
+/*     background-size: 15px; */
+  }
+  h4.title_checkmark a { 
+    margin-left: 5px;
+    color: #000;
+    font-size: 18px;
+  }
+  .active h4.title_checkmark a { 
+    color: #fff;
+  }
+  .anyflexbox .main__content,
+  .anyflexbox .main__content .shipping-addres_box  {
+    position: relative;
+/*     max-width: 500px;
+    width: 100%;
+    margin: 0 auto; */
+  }
+  .anyflexbox .main__content .shipping-addres_box  {
+    margin: 0 50px;
+  }
+/*   .anyflexbox .main__content .contact_info-method  {
+    max-width: 500px;
+    padding: 10px 0 4em;
+    margin: 0 auto;
+    width: 100%;
+  } */
+/*   .anyflexbox .main__content.active {
+    width: auto;
+  } */
+/*   .anyflexbox .main__content.payment_address-box {
+    width: -webkit-fill-available;
+  } */
+  footer.main__footer {
+    padding: 20px 30px;
+  }
+  .main.checkout--main_wrap {
+    width: 50%;
+    padding: 0;
+  }
+/*   .field__input-wrapper--icon-right .field__icon{
+    height: 45px;
+  } */
+  .sidebar__content {
+    padding: 0 30px;
+    text-align: left;
+  }
+  .sidebar.checkout--sidebar_wrap {
+    width: 50%;
+    position: relative;
+    padding: 0;
+/*     text-align: center; */
+  }
+  .contact_payment-method {
+    padding-top: 25px;
+  }
+  .contact_payment-method h2.section__title, .section--payment-method h2 {
+    font-size: 21px;
+    outline: 0;
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+  .contact_payment-method .step__footer__previous-link{
+    display: none;
+  }
+  .contact_payment-method .shown-if-js{
+    margin-top: 1em;
+/*     padding: 0 20px; */
+  }
+  .overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: rgba(225, 225, 225, 0.5);
+    opacity: 0.5;
+  }
+  .shipping-address_link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+/*     margin-top: 20px; */
+  }
+  .shipping-address_content-wrap {
+    font-size: 14px;
+  }
+  .shipping_box {
+    line-height: 2;
+    letter-spacing: 1.3px;
+    color: #986e3b;
+    font-family: Roboto,sans-serif;
+/*     font-style: normal;
+    font-weight: normal; */
+    font-size: 15px;
+  }
+  #order-summary {
+    padding: 20px;
+  }
+  .step[data-step="contact_information"] {
+/*     padding-top: 25px; */
+    padding: 20px 30px;
+/*     max-width: 500px;
+    margin: 0 auto;
+    width: 100%; */
+  }
+  .step[data-step="payment_method"] {
+/*     max-width: 550px; */
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+/*     margin: 0 auto; */
+  }
+  .shipping-address_link a{
+    color: #b12828;
+    float: right;
+    font-size: 15px;
+    text-decoration: underline;
+    z-index: 9;
+  }
+/*   .shipping-addres_box .contact_info-method .section__header{
+    margin-top: 20px;
+    z-index: 9;
+  } */
+  #continue_button:disabled {
+    opacity: 0.5;
+  }
+/*   .section--shipping-address .field__icon {
+    height: 46px;
+  } */
+  [data-step="payment_method"] .section--billing-address {
+    display: none !important;
+  }  
+  /* Start Shipping step overlay css*/
+  [data-step="shipping_method"]{
+    display: none;
+  } 
+/*   .shipping__overlay {
+    pointer-events: none;
+  } */
+  .contact_discount-box input#checkout_payment_gateway_62761697455{	
+    border-width: 7px;	
+    border-color: #111111;	
+  }
+/*   .full-page-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    overflow: auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background: #fff;
+    color: #545454;
+  }
+  .full-page-overlay__wrap {
+    margin: auto;
+    width: 100%;
+    padding: 10% 0;
+  }
+  .full-page-overlay__content {
+    margin: 0 auto;
+    max-width: 36em;
+    padding-left: 1em;
+    padding-right: 1em;
+    zoom: 1;
+  }
+  .full-page-overlay__content:after, .full-page-overlay__content:before {
+    content: "";
+    display: table;
+  }
+  .full-page-overlay__content:after {
+    clear: both;
+  } */
+/*   .logo--center {
+    text-align: center;
+  }
+  .logo {
+    display: block;
+    vertical-align: middle;
+  } */
+/*   .shipping__overlay .full-page-overlay__text {
+    font-size: 15px;
+    margin-top: 0;
+    letter-spacing: 1px;
+  }
+  .shipping__overlay .logo__image--medium {
+    max-height: inherit;
+  } */
+  .order-summary__sections {
+    height: auto;
+  }
+  .desktop-hide {
+    display: none; 
+  }
+  span.order-summary-toggle__text.order-summary-toggle__text--show {
+    text-align: left;
+  }
+  .sidebar__content .order-summary {
+    display: none;
+  }
+  .checkout--sidebar_wrap.active .order-summary{
+    display: block;
+  }
+  .wrap-box {
+    width: 100%;
+    display: flex;
+  }
+  .payment-method-wrapper ul[data-brand-icons-for-gateway="62761697455"] .payment-icon,
+  .payment-method-wrapper ul[data-brand-icons-for-gateway="62761697455"] .payment-icon-list__more,
+  .payment-method-wrapper ul[data-brand-icons-for-gateway="39500251191"] .payment-icon-list__more,
+  .payment-method-wrapper ul[data-brand-icons-for-gateway="39500251191"] .payment-icon.payment-icon--maestro {
+    display: none;
+  }
+  .payment-method-wrapper ul[data-brand-icons-for-gateway="62761697455"] .custom-payment_icon{
+    display: inline-block;
+  }
+  .radio-wrapper.content-box__row--secondary {
+    display: none;
+  }
+  div#payment-gateway-subfields-73702572196 {
+    display: block;
+  }
+  .main .field__input{
+    border: none;
+    border-bottom: 1px solid #d9d9d9;
+    border-radius: 0;
+    padding-top: 1.5em;
+    padding-bottom: 0.3571428571em;
+  }
+  .main .field__input:focus{
+    box-shadow: none;
+  }
+  .field--active[data-address-field="city"] .field__label {
+    opacity: 1;
+  }
+  .field--error .field__input {
+    box-shadow: none;
+    border-bottom: 1px solid #ff6d6d;
+  }
+  .section--payment-method .content-box {
+    border-color: #d9d9d9;
+  }
+  .page--thank-you .checkout_box-section{
+    border: none;
+/*     width: 100%; */
+    margin: 0;
+  } 
+  .page--thank-you .sidebar__content{
+    padding: 0;
+  }
+  .payment-checkout-box-section .shipping-addres_box .overlay{
+    background: rgba(225, 225, 225, 0.5);
+    z-index: 10;
+    border-radius: 5px;
+    opacity: 1;
+  }
+  .step__sections.payment-step_sections {
+    padding: 5px 0 17px;
+  }
+  .checkout_box-section.stock-problems .checkout--sidebar_wrap{
+    display: none;
+  }
+  .stock-problems .main__content{
+    width: 80%;
+    margin: 20px auto;
+  }
+  .anyflexbox .content .checkout--main_wrapstock-wrapper_box{
+    display: block;
+  }
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @media screen and (min-width: 1000px) { 
+/*     .page--thank-you .checkout_content-wrap .anyflexbox .wrap.checkout--main_wrap{
+      padding: 0 5%;
+      max-width: max-content;
+    } */
+    .page--thank-you h4.title_checkmark{
+      display: none;
+    }
+    .page--thank-you .sidebar__content .order-summary{
+      display: block;
+    }
+    .page--thank-you.anyflexbox .wrap.checkout--main_wrap{
+      padding: 0 5%;
+      max-width: 78.5714285714em;
+    }
+    .page--thank-you.anyflexbox .main__content{
+      padding: 0 0 4em;
+      max-width: none;
+      margin: 0;
+    }
+    .page--thank-you .main.checkout--main_wrap{
+      width: 52%;
+      padding-right: 6%;
+      padding-top: 4em;
+    }
+    .page--thank-you .sidebar.checkout--sidebar_wrap{
+      width: 38%;
+      padding-left: 4%;
+      padding-top: 4em;
+    }
+    .page--thank-you .checkout_content-wrap {
+      padding-bottom: 0;
+    }
+    .stock-wrapper_box{
+      width: 50%;
+    }
+/*     .anyflexbox .wrap.checkout--main_wrap {
+      max-width: 1200px;
+    } */
+  }
+  
+  @media screen and (max-width: 1000px) { 
+/*     .anyflexbox .content .wrap {
+      display: inline-block;
+    } */
+    .main.checkout--main_wrap {
+      width: 100%;
+      display: none;
+    }
+    .page--thank-you .wrap-box {
+      width: 100%;
+    }
+    .main.checkout--main_wrap.active, .sidebar.checkout--sidebar_wrap.active, .mobile-title {
+      display: block;
+    }
+    .mobile-hide {
+      display: none !important; 
+    }
+    .stock-problems .main.checkout--main_wrap {
+      display: block;
+      width: 80%;
+      margin: 0 auto;
+    }
+/*     .mobile-title_wrap {
+      padding: 0 14px;
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display:flex;
+    }
+    .mobile-title_wrap h4 {
+      border: 4px solid #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    } */
+    .desktop-hide {
+      display: block; 
+    }
+/*     .anyflexbox .main__content, .anyflexbox .main__footer {
+      padding-left: 0;
+      padding-right: 0;
+    } */
+/*     .order-summary-toggle {
+      text-align: center;
+    } */
+    .checkout_content-wrap{
+      padding-bottom: 1rem;
+    }
+    .page--thank-you .main.checkout--main_wrap{
+      display: block;
+      padding-top: 30px;
+    }
+    .step[data-step="payment_method"]{
+/*       max-width: 100%; */
+      padding: 40px 0 20px;
+    }
+/*     .mobile-title_wrap {
+      width: auto;
+    } */
+    .order-summary-toggle, .checkout--main_wrap .main__footer {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+/*     h4.title_checkmark a { 
+      font-size: 12px;
+      text-transform: capitalize;
+    } */
+    .sidebar.checkout--sidebar_wrap {
+      width: 100%;
+    }
+    .wrap-box {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+/*     .contact_payment-method {	
+      padding-bottom: 25px;	
+    } */
+    #order-summary {
+      padding: 0;
+    }
+    .sidebar__content .order-summary {
+      display: block;
+    }
+    .page--thank-you .order-summary-toggle {
+      display: block;
+    }
+    .order-summary-toggle:hover .order-summary-toggle__text, 
+    .order-summary-toggle:focus .order-summary-toggle__text{
+      text-align: left;
+    }
+    .sidebar::after{
+      left: 0;
+      width: 100%;
+      box-shadow: none;
+    }
+    .checkout--main_wrap .main__footer {
+      padding: 30px 20px;
+    }
+    .mobile_payment_box .contact_payment-method {
+/*       text-align: left; */
+      padding: 20px  30px 80px;
+    }
+/*     .toggle--hide .order-summary-toggle__text--hide{
+      text-align: left;
+    } */
+    .shipping-address_link{
+      z-index: 99;
+    }
+    .contact_payment-method .shown-if-js{
+      margin-bottom: 60px;
+    }
+  }
+  @media screen and (max-width: 999px) { 
+/*     .step[data-step="payment_method"], .step__footer{
+      padding-left: 0;
+      padding-right: 0;
+    } */
+    .shipping-addres_box {
+      position: relative;
+      padding: 0 0 20px;
+    }
+    .step[data-step="contact_information"] .step__sections {
+      padding: 5px 0;
+/*       max-width: 500px;
+      margin: 0 auto;
+      width: 100%; */
+    }
+/*     .step[data-step="contact_information"] .step__sections .section__header {
+      margin-top: 20px;
+    } */
+    .step__sections.payment-step_sections .field__input{
+      border: none;
+      border-bottom: 1px solid #d9d9d9;
+      border-radius: 0;
+      background: rgba(225, 225, 225, 0.5);
+    }
+  }
+  @media screen and (max-width: 767px) { 
+/*     .mobile-title_wrap, .anyflexbox .content .wrap {
+      padding: 0 8px;
+    }*/
+    .anyflexbox .content .wrap {
+      padding: 0;
+    }  
+/*     .mobile-title_wrap h4 {
+      font-size: 12px;
+      padding: 10px 2px;
+      vertical-align: middle;
+    } */
+    .wrap.checkout--main_wrap{
+      padding: 0;
+    }
+    .sidebar__content {
+      padding: 0 20px;
+    }
+    .step__footer {
+      padding: 0 20px;
+    }
+    .checkout_box-section {
+      padding: 0 10px;
+      border: none;
+      margin-bottom: 0;
+    }
+    [data-address-field="first_name"], [data-address-field="last_name"], 
+    [data-address-field="city"], [data-address-field="province"]{
+      width: 50%;
+    }
+    .anyflexbox .banner, .step[data-step="contact_information"] {
+      padding:0 0 20px;
+    }
+    .stock-problems .main.checkout--main_wrap, .stock-problems .main__content {
+      width: 100%;
+    }
+    .checkout_box-section.stock-problems .checkout--sidebar_wrap {
+      display: block;
+    }
+  }
+  @media screen and (max-width: 480px) { 
+/*     body.checkout_body-wrapper {
+      height: auto;
+    } */
+/*     .checkout-modal-wrapper {
+      width: 22em;
+    } */
+    .mobile-title_wrap, .radio__label.payment-method-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+/*     .anyflexbox .main__content {
+      padding-bottom: 2em;
+    } */
+    .section.section--shipping-address{
+      padding-top: 1em;
+    }
+    .breadcrumb{
+      padding-bottom: 1em;
+    }
+    .product-table .product__description{
+      padding-left: 20px;
+    }
+    .order-summary-toggle, .checkout--main_wrap .main__footer {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+    .step[data-step="payment_method"], .mobile_payment_box .contact_payment-method{
+      padding: 20px;
+    }
+    .contact_payment-method .shown-if-js {
+      margin-bottom: 0;
+      padding: 0 20px;
+    }
+    .shipping-addres_box {
+      margin-left: -20px;
+      margin-right: -20px;
+    }
+    .layout-flex--loose-horizontal .section__title.layout-flex__item{
+      padding-left: 20px
+    }
+    .section.section--shipping-address h2{
+      padding-left: 10px
+    }
+    .shipping-address_link a{
+      padding-right: 10px;
+    }
+  }
+  @media screen and (max-width: 320px) { 
+    .mobile-title_wrap h4 {
+      min-height: 25px;
+    }
+  }
+</style>
+
+<!-- End  Added hide COD scripts by bhumika -->
+<script>
+  (function($) {
+    function hideCOD() {
+      var pr = $('.total-line__price.payment-due span.payment-due__price').attr('data-checkout-payment-due-target');
+      var up_limit = 5000;
+      var low_limit = 300;
+      var total_price = pr/100;
+      if( total_price > up_limit || total_price < low_limit ) {
+        console.log('price:'+total_price);
+        $(".sidebar__content .content-box__row[data-select-gateway='72103067823']").css('opacity', 0.4);
+        $(".sidebar__content .content-box__row[data-select-gateway='72103067823'] input").attr('disabled', true);
+
+        if( total_price > up_limit ) {
+          $(".sidebar__content .content-box__row[data-select-gateway='72103067823'] .radio__label").append('<p> COD is not available on orders above ₹5,000</p>');
+        } else {
+          $(".sidebar__content .content-box__row[data-select-gateway='72103067823'] .radio__label").append('<p> COD is not available on orders below ₹300</p>');
+        }
+        if($("input[name='checkout[payment_gateway]']:checked").val() == '72103067823'){
+          $("#checkout_payment_gateway_39500251191").trigger('click');  
+        }
+      } 
+    }
+    hideCOD();
+    $(document).ready(function(){
+      $(document).on('page:change', function () {  
+        hideCOD(); 
+      });
+    });
+    $(function () {
+      $('.shipping-addres_box input').blur();
+    });
+  })(Checkout.$); 
+</script>
