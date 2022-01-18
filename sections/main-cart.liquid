@@ -147,12 +147,15 @@ button.btn.cart__checkout {
 {% endschema %}
 <script>
   $(document).ready(function(){
-    console.log("test");
-	localStorage.setItem('fp_edd_source', 'IP_Lookup');
-    localStorage.setItem('fp_shown_edd', 'Monday, January 24');
-
+    //console.log("test");
+	//localStorage.setItem('fp_edd_source', 'IP_Lookup');
+    //localStorage.setItem('fp_shown_edd', 'Monday, January 24');
+    if (localStorage.getItem("fp_edd_source") === null) {
+     	console.log(localStorage.getItem('fp_edd_source'));
+    }
+    if (localStorage.getItem("fp_shown_edd") === null) {
+     	console.log(localStorage.getItem('fp_shown_edd'));
+    }
   });
-  if (localStorage.getItem("infiniteScrollEnabled") === null) {
-    //...
-  }
+  
 </script>
