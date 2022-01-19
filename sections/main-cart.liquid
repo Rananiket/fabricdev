@@ -148,8 +148,8 @@ button.btn.cart__checkout {
 <script>
   $(document).ready(function(){
     //console.log("test");
-	//localStorage.setItem('fp_edd_source', 'IP_Lookup');
-    //localStorage.setItem('fp_shown_edd', 'Monday, January 24');    
+	localStorage.setItem('fp_edd_source', 'IP_Lookup');
+    localStorage.setItem('fp_shown_edd', 'Monday, January 24');    
     if("fp_edd_source" in localStorage){     	
       var fp_edd_source = localStorage.getItem('fp_edd_source');
       $("#eddCartShownDate").val(fp_edd_source);
