@@ -180,7 +180,14 @@
 </script>
 <script>
   $(document).ready(function(){
-    if("fp_edd_source" in localStorage){     	
+    addEDDStorage();
+  });  
+   document.addEventListener('ajaxProduct:added', function(evt) {
+    //console.log("Testing");
+     addEDDStorage();
+  });
+  function addEDDStorage(){
+  	if("fp_edd_source" in localStorage){     	
       var fp_eddSide_source = localStorage.getItem('fp_edd_source');
       $("#eddSideCartShownDate").val(fp_eddSide_source);
     }
@@ -188,9 +195,6 @@
       var fp_shown_eddSide = localStorage.getItem('fp_shown_edd');
       $("#eddSideCartSource").val(fp_shown_eddSide);
     }
-  });
-  document.addEventListener('ajaxProduct:added', function(evt) {
-    console.log("Testing");
-  });
+  } 
   
 </script>
