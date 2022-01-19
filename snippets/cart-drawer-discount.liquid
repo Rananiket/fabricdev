@@ -37,6 +37,8 @@
           var errorText = jQuery(Htmlresponse).find('.field--error .field__message--error').length;
           var warningText = jQuery(Htmlresponse).find('.notice.notice--warning.default-background').length;
           
+          console.log(warningText);
+          
           if(errorText == 1){
             $('.coupon-error-box').html('<p>Enter a valid discount code</p>').show();
             $('.tag-close').show();
@@ -44,7 +46,6 @@
             $('#CartDrawer .cart__item-sub.cart__item-row').removeClass('subtotal-add');
             $('.drawer__scrollable').css('opacity','');
           }else if(warningText == 1){
-            console.log(warningText);
             $('.coupon-warning-box').html('<p>Enter a valid discount code</p>').show();
           }else{
             $('.discount-code_wrap .discount-price').html(orderText);
