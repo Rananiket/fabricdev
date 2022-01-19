@@ -37,7 +37,7 @@
           var errorText = jQuery(Htmlresponse).find('.field--error .field__message--error').length;
           var warningText = jQuery(Htmlresponse).find('.notice.notice--warning.default-background').length;
           
-          console.log(warningText);
+          console.log(errorText);
           
           if(errorText == 1){
             $('.coupon-error-box').html('<p>Enter a valid discount code</p>').show();
