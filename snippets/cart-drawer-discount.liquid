@@ -67,7 +67,8 @@
     
     $(document).on("click","#custom-coupon-button",function(event) {
       event.preventDefault();
-      if($('#custom-coupon-field').val() == ''){
+      const result = await fetch(`/admin/discount_codes/lookup.json?code=${discountCode}`);
+      if($('#custom-coupon-field').val() == '' || result.status === 200){
          $('.discount-code_wrap, .total-box').hide();
          $('.coupon-error-box').html('<p>Enter a valid discount code</p>').show();
       } else {
