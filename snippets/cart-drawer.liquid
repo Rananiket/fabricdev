@@ -155,6 +155,10 @@
           {{ 'cart.general.empty' | t }}
         </div>
       </div>
+      <p class="cart-attribute__field">
+        <input id="eddSideCartShownDate" type="hidden" name="attributes[Shown EDD]" value="">
+        <input id="eddSideCartSource" type="hidden" name="attributes[EDD Source]" value="">
+      </p>
     </form>
   </div>
 {%- endif -%}
@@ -173,4 +177,17 @@
   }else{    
     $(".custom-cart-form-class").attr('action','/cart');
   }
+</script>
+<script>
+  $(document).ready(function(){
+    if("fp_edd_source" in localStorage){     	
+      var fp_eddSide_source = localStorage.getItem('fp_edd_source');
+      $("#eddSideCartShownDate").val(fp_eddSide_source);
+    }
+    if("fp_shown_edd" in localStorage){
+      var fp_shown_eddSide = localStorage.getItem('fp_shown_edd');
+      $("#eddSideCartSource").val(fp_shown_eddSide);
+    }
+  });
+  
 </script>
