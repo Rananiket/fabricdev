@@ -64,16 +64,6 @@
       });
     }
     
-    async function getDiscountCodeUrl(discountCode) {
-      const result = await fetch(`/admin/discount_codes/lookup.json?code=${discountCode}`);
-
-      if (result.status === 200) {
-        return { ok: true, url: result.url };
-      }
-
-      return { ok: false };
-    }
-    
     $(document).on("click","#custom-coupon-button",function(event) {
       event.preventDefault();
       if($('#custom-coupon-field').val() == ''){
@@ -82,7 +72,6 @@
       } else {
         sidebarCoupon();
       }
-      getDiscountCodeUrl();
     });
     
     $(document).ready(function() {
