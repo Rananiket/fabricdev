@@ -35,7 +35,7 @@
           var totalPrice = orderText.find('.total-line__price .order-summary__emphasis').data('checkout-discount-amount-target')/100;
           var totalAmount = '<p>Rs. ' + (subtotalPrice - totalPrice).toFixed(2) + '</p>';
           var errorText = jQuery(Htmlresponse).find('.field--error .field__message--error').length;
-          var warningText = jQuery(Htmlresponse).find('.notice.notice--warning.default-background');
+          var warningText = jQuery(Htmlresponse).find('.notice.notice--warning.default-background').html();
           
           console.log(warningText);
           
