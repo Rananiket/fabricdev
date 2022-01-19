@@ -189,5 +189,8 @@
       $("#eddSideCartSource").val(fp_shown_eddSide);
     }
   });
+  document.addEventListener('ajaxProduct:added', function(evt) {
+    console.log("Testing");
+  });
   
 </script>
