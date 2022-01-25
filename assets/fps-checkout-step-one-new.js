@@ -651,7 +651,7 @@
     }
     
     
-    if($('div[data-step="payment_method"]').length > 0){
+    /*if($('div[data-step="payment_method"]').length > 0){
       //console.log("Jay shri Ram");
       $(document).on("click", "#continue_button", function(e){
           e.preventDefault();
@@ -673,6 +673,6 @@
             }
           });
       });
-    }
+    }*/
   });
 })(Checkout.$);
